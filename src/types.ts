@@ -81,6 +81,8 @@ export interface AddExpenseInput {
   splitMethod: SplitMethod;
   amounts?: Record<string, number>; // For "Amounts" split method
   expenseDate?: number; // Unix timestamp, defaults to now
+  originalAmount?: number; // Original amount if different from normalized amount
+  originalCurrency?: string; // Original currency if different from normalized currency
 }
 
 /**

@@ -1,167 +1,19 @@
 /**
- * Database layer for split-the-bob using Bun's sqlite
+ * Expense-related database operations
  */
 
-import { Database } from "bun:sqlite";
-import * as fs from "fs";
-import * as path from "path";
+import { db } from "./connection";
 import type {
-  Split,
   Expense,
-  SplitMethodData,
-  CreateSplitInput,
   AddExpenseInput,
   UpdateExpenseInput,
+  SplitMethodData,
 } from "../types";
-
-let db: Database | null = null;
-
-/**
- * Get or initialize the database connection
- */
-export function getDatabase(): Database {
-  if (!db) {
-    const dbPath = Bun.env.DATABASE_URL || "./split-the-bob.db";
-    db = new Database(dbPath);
-    initializeDatabase();
-  }
-  return db;
-}
-
-/**
- * Initialize database schema
- */
-function initializeDatabase(): void {
-  if (!db) return;
-
-  const schemaPath = path.join(import.meta.dir, "schema.sql");
-  const schema = fs.readFileSync(schemaPath, "utf-8");
-
-  // Execute schema statements
-  const statements = schema.split(";").filter((s) => s.trim());
-  for (const statement of statements) {
-    try {
-      db.exec(statement);
-    } catch (e) {
-      // Table may already exist
-      console.debug("Schema statement:", e);
-    }
-  }
-}
-
-/**
- * Generate ID from noun-adjective pairs (simple version)
- */
-function generateId(): string {
-  const adjectives = [
-    "colorful",
-    "shiny",
-    "quiet",
-    "brave",
-    "clever",
-    "elegant",
-    "fancy",
-    "gentle",
-    "happy",
-    "kind",
-  ];
-  const nouns = [
-    "elephant",
-    "tiger",
-    "dolphin",
-    "penguin",
-    "butterfly",
-    "eagle",
-    "panda",
-    "fox",
-    "otter",
-    "koala",
-  ];
-
-  const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-  const noun = nouns[Math.floor(Math.random() * nouns.length)];
-  return `${adj}-${noun}`;
-}
-
-/**
- * Create a new split
- */
-export function createSplit(input: CreateSplitInput): Split {
-  const database = getDatabase();
-  const id = generateId();
-  const now = Date.now();
-
-  const stmt = database.prepare(`
-    INSERT INTO splits (id, description, participants, default_currency, created_at)
-    VALUES (?, ?, ?, ?, ?)
-  `);
-
-  stmt.run(
-    id,
-    input.description,
-    input.participants.join(","),
-    input.defaultCurrency,
-    now,
-  );
-
-  return {
-    id,
-    description: input.description,
-    participants: input.participants,
-    defaultCurrency: input.defaultCurrency,
-    createdAt: now,
-  };
-}
-
-/**
- * Get a split by ID
- */
-export function getSplit(id: string): Split | null {
-  const database = getDatabase();
-  const stmt = database.prepare(`
-    SELECT id, description, participants, default_currency, created_at
-    FROM splits
-    WHERE id = ?
-  `);
-
-  const row = stmt.get(id) as any;
-  if (!row) return null;
-
-  return {
-    id: row.id,
-    description: row.description,
-    participants: row.participants.split(","),
-    defaultCurrency: row.default_currency,
-    createdAt: row.created_at,
-  };
-}
-
-/**
- * Get all splits
- */
-export function getAllSplits(): Split[] {
-  const database = getDatabase();
-  const stmt = database.prepare(`
-    SELECT id, description, participants, default_currency, created_at
-    FROM splits
-    ORDER BY created_at DESC
-  `);
-
-  const rows = stmt.all() as any[];
-  return rows.map((row) => ({
-    id: row.id,
-    description: row.description,
-    participants: row.participants.split(","),
-    defaultCurrency: row.default_currency,
-    createdAt: row.created_at,
-  }));
-}
 
 /**
  * Add an expense to a split
  */
 export function addExpense(input: AddExpenseInput): Expense {
-  const database = getDatabase();
   const now = Date.now();
   const expenseDate = input.expenseDate || now;
 
@@ -173,7 +25,7 @@ export function addExpense(input: AddExpenseInput): Expense {
     splitMethodData.amounts = input.amounts;
   }
 
-  const stmt = database.prepare(`
+  const stmt = db.prepare(`
     INSERT INTO expenses (
       split_id, name, amount, currency, original_amount, original_currency,
       payed_by, payed_for, expense_date, split_method, created_at
@@ -214,8 +66,7 @@ export function addExpense(input: AddExpenseInput): Expense {
  * Get expenses for a split
  */
 export function getExpensesBySplitId(splitId: string): Expense[] {
-  const database = getDatabase();
-  const stmt = database.prepare(`
+  const stmt = db.prepare(`
     SELECT 
       id, split_id, name, amount, currency, original_amount, original_currency,
       payed_by, payed_for, expense_date, split_method, created_at
@@ -245,8 +96,7 @@ export function getExpensesBySplitId(splitId: string): Expense[] {
  * Get a single expense by ID
  */
 export function getExpense(id: number): Expense | null {
-  const database = getDatabase();
-  const stmt = database.prepare(`
+  const stmt = db.prepare(`
     SELECT 
       id, split_id, name, amount, currency, original_amount, original_currency,
       payed_by, payed_for, expense_date, split_method, created_at
@@ -277,8 +127,6 @@ export function getExpense(id: number): Expense | null {
  * Update an expense
  */
 export function updateExpense(input: UpdateExpenseInput): Expense | null {
-  const database = getDatabase();
-
   const splitMethodData: SplitMethodData = {
     method: input.splitMethod,
   };
@@ -287,7 +135,7 @@ export function updateExpense(input: UpdateExpenseInput): Expense | null {
     splitMethodData.amounts = input.amounts;
   }
 
-  const stmt = database.prepare(`
+  const stmt = db.prepare(`
     UPDATE expenses
     SET
       name = ?,
@@ -323,18 +171,7 @@ export function updateExpense(input: UpdateExpenseInput): Expense | null {
  * Delete an expense
  */
 export function deleteExpense(id: number): boolean {
-  const database = getDatabase();
-  const stmt = database.prepare("DELETE FROM expenses WHERE id = ?");
-  stmt.run(id);
-  return true;
-}
-
-/**
- * Delete a split and all its expenses
- */
-export function deleteSplit(id: string): boolean {
-  const database = getDatabase();
-  const stmt = database.prepare("DELETE FROM splits WHERE id = ?");
+  const stmt = db.prepare("DELETE FROM expenses WHERE id = ?");
   stmt.run(id);
   return true;
 }
