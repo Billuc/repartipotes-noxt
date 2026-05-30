@@ -1,12 +1,13 @@
 {
-  "name": "web-server-exp",
+  "name": "noxt-template",
   "module": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot ./index.ts",
-    "build": "bun run ./lib/build.ts",
+    "dev": "MODE=development bun run --watch ./index.ts",
+    "build": "bun build --target=bun --outdir=dist index.ts",
     "preview": "cd dist && bun run ./index.js",
-    "prerender": "bun run ./lib/prerender.ts"
+    "prerender-static": "bun run ./prerender.ts",
+    "prerender-static-preview": "bun run ./prerender.ts --preview"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -15,10 +16,6 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "htm": "^3.1.1",
-    "preact": "^10.29.0",
-    "preact-render-to-string": "^6.6.6",
-    "react": "npm:@preact/compat",
-    "react-dom": "npm:@preact/compat"
+    "noxt": "github:Billuc/noxt"
   }
 }

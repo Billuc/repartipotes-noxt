@@ -1,22 +1,13 @@
-import { prepareImportMap, serverRender } from "@lib/server";
-import { MODE, PORT } from "@lib/env";
-import { handleGetSplits } from "./src/api/getSplits";
-import { handleCreateSplit } from "./src/api/createSplit";
-import { handleAddExpense } from "./src/api/addExpense";
+import { prepareRoutes } from "noxt" with { type: "macro" };
 
-const importMap = await prepareImportMap();
+const PORT = process.env.PORT ?? "2101";
+// @ts-ignore - prepareRoutes is a Bun macro, its return type is resolved at build time
+const routes = (await import(prepareRoutes())).default;
 
 Bun.serve({
   port: PORT,
-  routes: {
-    // API routes
-    "/api/getSplits": handleGetSplits,
-    "/api/createSplit": handleCreateSplit,
-    "/api/addExpense": handleAddExpense,
-    // Page routes
-    ...importMap,
-  },
-  development: MODE === "development",
+  routes,
+  development: process.env.MODE === "development",
 });
 
 console.log("Server running on http://localhost:" + PORT);
