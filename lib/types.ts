@@ -59,3 +59,10 @@ export interface Currency {
   country: string;
   country_code: string | null;
 }
+
+export interface Balance {
+  debtor: string;
+  amount: number;
+  currency: string;
+  creditor: string;
+}

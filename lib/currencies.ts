@@ -30,3 +30,41 @@ function ensureCurrencies(): Currency[] {
 export function getAllCurrencies(): Currency[] {
   return ensureCurrencies();
 }
+
+export function tryGetCurrency(code: string): Currency {
+  const currency = ensureCurrencies().find(
+    (c) => c.code.toUpperCase() === code.toUpperCase(),
+  );
+  if (!currency) {
+    throw new Error(`Unknown currency: ${code}`);
+  }
+  return currency;
+}
+
+export async function convert(
+  amount: number,
+  from: Currency,
+  to: Currency,
+): Promise<number> {
+  if (from.code === to.code) return amount;
+
+  const token = process.env.EXCHANGE_RATE_API_KEY;
+  if (!token) {
+    throw new Error("Missing env var: EXCHANGE_RATE_API_KEY");
+  }
+
+  const endpoint = `https://v6.exchangerate-api.com/v6/${token}/pair/${from.code}/${to.code}/${amount.toFixed(2)}`;
+
+  const response = await fetch(endpoint);
+  const data: any = await response.json();
+
+  if (data.result === "success") {
+    return data.conversion_result as number;
+  }
+
+  if (data.result === "error") {
+    throw new Error(`API error: ${data["error-type"] ?? "unknown"}`);
+  }
+
+  throw new Error("Incorrect API data");
+}
