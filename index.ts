@@ -1,6 +1,5 @@
 import { prepareRoutes } from "noxt" with { type: "macro" };
 import { getDb } from "./lib/database";
-import { createCurrencyRepository } from "./lib/repositories/currency_repository";
 import {
   createSplitHandlers,
   createExpenseHandlers,
@@ -12,7 +11,7 @@ const db = getDb();
 
 const { handleCreateSplit, handleGetSplit, handleUpdateSplit } = createSplitHandlers(db);
 const { handleCreateExpense, handleUpdateExpense, handleDeleteExpense } = createExpenseHandlers(db);
-const { handleListCurrencies } = createCurrencyHandlers(createCurrencyRepository());
+const { handleListCurrencies } = createCurrencyHandlers();
 
 const PORT = process.env.PORT ?? "2101";
 // @ts-ignore - prepareRoutes is a Bun macro, its return type is resolved at build time

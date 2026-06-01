@@ -1,8 +1,8 @@
 import type { IDatabase } from "../lib/database";
 import { createSplitRepository } from "../lib/repositories/split_repository";
 import { createExpenseRepository } from "../lib/repositories/expense_repository";
+import { createCurrencyRepository } from "../lib/repositories/currency_repository";
 import type { CreateExpenseInput, UpdateExpenseInput } from "../lib/types";
-import { tryGetCurrency, convert as convertCurrency } from "../lib/currencies";
 import { buildSplitMethod, convertSplitMethodAmounts } from "../lib/expenses";
 import type { SplitMethod } from "../lib/types";
 import { jsonResponse, NotFoundError, BadRequestError } from "./utils";
@@ -10,15 +10,16 @@ import { jsonResponse, NotFoundError, BadRequestError } from "./utils";
 export function createExpenseHandlers(db: IDatabase) {
   const splitRepo = createSplitRepository(db);
   const expenseRepo = createExpenseRepository(db);
+  const currencyRepo = createCurrencyRepository();
 
   async function convertExpenseAmount(
     amount: number,
     currencyCode: string,
     defaultCurrencyCode: string,
   ): Promise<number> {
-    const from = tryGetCurrency(currencyCode);
-    const to = tryGetCurrency(defaultCurrencyCode);
-    return await convertCurrency(amount, from, to);
+    const from = currencyRepo.tryGetCurrency(currencyCode);
+    const to = currencyRepo.tryGetCurrency(defaultCurrencyCode);
+    return await currencyRepo.convert(amount, from, to);
   }
 
   async function handleCreateExpense(body: Record<string, unknown>): Promise<Response> {
