@@ -1,20 +1,46 @@
 import { Database } from "bun:sqlite";
+import type { Changes, SQLQueryBindings } from "bun:sqlite";
 
-let db: Database | null = null;
+export interface IDatabase {
+  query<Row>(sql: string): {
+    all(...params: SQLQueryBindings[]): Row[];
+    get(...params: SQLQueryBindings[]): Row | null;
+    run(...params: SQLQueryBindings[]): Changes;
+  };
+}
 
-export function getDb(): Database {
+class BunDatabase implements IDatabase {
+  private db: Database;
+
+  constructor(db: Database) {
+    this.db = db;
+  }
+
+  query<Row>(sql: string) {
+    const stmt = this.db.query<Row, SQLQueryBindings[]>(sql);
+    return {
+      all: (...params: SQLQueryBindings[]) => stmt.all(...params),
+      get: (...params: SQLQueryBindings[]) => stmt.get(...params),
+      run: (...params: SQLQueryBindings[]) => stmt.run(...params),
+    };
+  }
+}
+
+let db: IDatabase | null = null;
+
+export function getDb(): IDatabase {
   if (!db) {
     const url = process.env.DATABASE_URL ?? "sqlite://stb.data";
     const path = url.replace("sqlite://", "");
-    db = new Database(path);
-    db.run("PRAGMA journal_mode=WAL");
-    initTables();
+    const d = new Database(path);
+    d.run("PRAGMA journal_mode=WAL");
+    initTables(d);
+    db = new BunDatabase(d);
   }
   return db;
 }
 
-function initTables(): void {
-  const d = db!;
+function initTables(d: Database): void {
   d.run(`
     CREATE TABLE IF NOT EXISTS splits (
       id TEXT PRIMARY KEY,
