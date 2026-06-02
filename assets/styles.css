@@ -638,4 +638,530 @@ footer a:hover {
   .island-demo {
     padding: 1.5rem;
   }
+
+  .split-details {
+    flex-direction: column !important;
+  }
+}
+
+/* ===== Island / App Styles ===== */
+
+.island-form {
+  background: #0e0e16;
+  border: 1px solid #ffffff08;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  text-align: start;
+}
+
+.island-form label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #c4b5fd;
+}
+
+.island-form input:not([type="checkbox"]),
+.island-form select,
+.island-form textarea {
+  display: block;
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.6rem 0.8rem;
+  background: #0a0a0f;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.island-form input:focus,
+.island-form select:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px #7c3aed20;
+}
+
+.island-form input:disabled,
+.island-form select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.island-form fieldset {
+  border: 1px solid #ffffff10;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.island-form legend {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #a78bfa;
+  padding: 0 0.3rem;
+}
+
+.form-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #ef444410;
+  border: 1px solid #ef444430;
+  border-radius: 8px;
+}
+
+.loading-text {
+  color: #a1a1aa;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.muted-text {
+  color: #52525b;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+}
+
+/* Buttons */
+.btn-ghost {
+  background: transparent;
+  color: #a78bfa;
+  border: 1px solid #334155;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+  border-color: #7c3aed80;
+  background: #7c3aed10;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+  scale: 1.03;
+}
+
+.btn-icon {
+  background: transparent;
+  color: #52525b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+  color: #ef4444;
+  border-color: #ef444460;
+  background: #ef444410;
+}
+
+.btn-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: transparent;
+  color: #52525b;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-close:hover {
+  color: #e0e0e0;
+  background: #ffffff08;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  scale: 1 !important;
+}
+
+/* Participant row */
+.participant-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.participant-row input {
+  flex: 1;
+}
+
+.participant-amount-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-weight: normal !important;
+  color: #e0e0e0 !important;
+  font-size: 0.85rem !important;
+  margin-bottom: 0 !important;
+  flex: 1;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.participant-amount-input {
+  width: 80px !important;
+  flex-shrink: 0;
+}
+
+/* Currency select */
+.currency-select {
+  appearance: base-select;
+}
+
+.currency-select img {
+  vertical-align: middle;
+  margin-right: 0.3rem;
+}
+
+/* Modal / Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background: #0e0e16;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  margin-top: 2rem;
+}
+
+.modal-content h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #e0e0e0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.form-actions .btn {
+  flex: 1;
+  justify-content: center;
+}
+
+/* Create split */
+.create-split {
+  text-align: start;
+}
+
+/* Join split */
+.join-split {
+  text-align: start;
+}
+
+.recent-splits {
+  margin-top: 1.5rem;
+}
+
+.recent-splits h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #a1a1aa;
+  margin-bottom: 0.5rem;
+}
+
+.splits-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.split-row {
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.split-row:hover {
+  background: #ffffff08;
+}
+
+.split-row td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #ffffff08;
+}
+
+.split-row a {
+  color: #a78bfa;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.split-row a:hover {
+  color: #22d3ee;
+}
+
+/* Split view */
+.split-view {
+  text-align: start;
+}
+
+.split-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.split-header h2 {
+  margin: 0;
+  text-align: start;
+  width: auto;
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+}
+
+.split-header h2::after {
+  display: none;
+}
+
+.split-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.split-details > div {
+  background: #0e0e16;
+  border: 1px solid #ffffff08;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.split-details h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #c4b5fd;
+  margin-bottom: 0.75rem;
+}
+
+.split-details ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.split-details li {
+  padding: 0.35rem 0;
+  border-bottom: 1px solid #ffffff08;
+  font-size: 0.9rem;
+}
+
+.split-details li:last-child {
+  border-bottom: none;
+}
+
+.highlight {
+  color: #c4b5fd;
+  font-weight: 500;
+}
+
+/* Individual balance coloring */
+.individual-balance {
+  font-size: 0.8rem;
+  margin-left: 0.3rem;
+}
+
+.individual-balance.positive {
+  color: #22c55e;
+}
+
+.individual-balance.negative {
+  color: #ef4444;
+}
+
+/* Expenses section */
+.expenses-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.expenses-header h3 {
+  margin-bottom: 0;
+}
+
+.expenses-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.expense-row td {
+  padding-top: 0.75rem;
+}
+
+.expense-name {
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.expense-amount {
+  color: #a78bfa;
+  margin-left: 0.3rem;
+}
+
+.original-amount {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  margin-left: 0.3rem;
+}
+
+.expense-details-row td {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #ffffff08;
+  font-size: 0.8rem;
+  color: #a1a1aa;
+}
+
+.expense-form-wrapper {
+  display: inline;
+  margin-left: 0.5rem;
+}
+
+.expense-form-wrapper .btn-ghost {
+  font-size: 0.75rem;
+}
+
+/* Add participant form */
+.add-participant-form {
+  margin-top: 0.75rem;
+  margin-bottom: 0;
+  padding: 0.75rem;
+}
+
+.add-participant-form .participant-row {
+  margin-bottom: 0;
+}
+
+/* Share popover */
+.share-popover {
+  background: #0e0e16;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.share-popover p {
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: #a1a1aa;
+  word-break: break-all;
+}
+
+.share-popover a {
+  color: #a78bfa;
+}
+
+.share-popover strong {
+  color: #e0e0e0;
+  font-size: 1.1rem;
+}
+
+.share-popover .btn {
+  margin-left: 0.5rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.share-popover .btn-close {
+  position: static;
+  margin-top: 0.5rem;
+  width: auto;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  border: 1px solid #334155;
+  border-radius: 6px;
+}
+
+/* Responsive split layout */
+@media (min-width: 768px) {
+  .split-details {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .split-details > #participants {
+    flex: 1 1 25%;
+    min-width: 220px;
+  }
+
+  .split-details > #expenses {
+    flex: 2 1 50%;
+  }
+
+  .split-details > #balances {
+    flex: 1 1 25%;
+    min-width: 220px;
+  }
 }
