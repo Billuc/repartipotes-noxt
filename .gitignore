@@ -18,6 +18,12 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # dotenv environment variable files
 .env
+.env.example
+
+# SQLite database files
+*.data
+*.data-shm
+*.data-wal
 .env.development.local
 .env.test.local
 .env.production.local
