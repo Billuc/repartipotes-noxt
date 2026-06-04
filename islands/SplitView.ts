@@ -1,7 +1,9 @@
 import { html } from "htm/preact";
 import { useState, useEffect, useCallback } from "preact/hooks";
 import { defineIsland } from "noxt";
-import ExpenseForm from "./ExpenseForm";
+import ExpensesTab from "../components/ExpensesTab";
+import SettlementsTab from "../components/SettlementsTab";
+import SettingsTab from "../components/SettingsTab";
 
 interface SplitMethod {
   method: "Evenly" | "Amounts";
@@ -51,14 +53,6 @@ function storeSplitId(id: string) {
   } catch {}
 }
 
-function formatDate(ts: number): string {
-  return new Date(ts * 1000).toLocaleString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
-
 function SplitView() {
   const [splitId, setSplitId] = useState<string | null>(null);
   const [data, setData] = useState<SplitData | null>(null);
@@ -66,9 +60,8 @@ function SplitView() {
   const [error, setError] = useState<string | null>(null);
   const [refreshCounter, setRefreshCounter] = useState(0);
   const [showShare, setShowShare] = useState(false);
-  const [newParticipant, setNewParticipant] = useState("");
-  const [participantError, setParticipantError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState<"expenses" | "settlements" | "settings">("expenses");
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("split_id");
@@ -114,32 +107,6 @@ function SplitView() {
   const loadData = useCallback(() => {
     setRefreshCounter((c) => c + 1);
   }, []);
-
-  const handleAddParticipant = async (e: Event) => {
-    e.preventDefault();
-    if (!newParticipant.trim() || !data) return;
-
-    const updated = [...data.participants, newParticipant.trim()];
-
-    try {
-      const res = await fetch(`/api/splits/${splitId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ participants: updated }),
-      });
-
-      if (!res.ok) {
-        const errData = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-        throw new Error((errData.error as string) ?? "Failed to add participant");
-      }
-
-      setNewParticipant("");
-      setParticipantError(null);
-      loadData();
-    } catch (err) {
-      setParticipantError(err instanceof Error ? err.message : "Failed to add participant");
-    }
-  };
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -217,127 +184,60 @@ function SplitView() {
           `
         : null}
 
-      <div class="split-details">
-        <div id="participants">
-          <h3>Participants</h3>
-          <ul>
-            ${data.participants.map(
-              (p) => html`
-                <li>
-                  ${p}
-                  ${data.individualBalances[p] != null
-                    ? (() => {
-                        const displayBalance =
-                          -data.individualBalances[p]!;
-                        if (displayBalance === 0) return null;
-                        return html`
-                          <span
-                            class="individual-balance ${displayBalance > 0
-                              ? "positive"
-                              : "negative"}"
-                          >
-                            (${displayBalance > 0 ? "+" : ""}${displayBalance.toFixed(2)}${data.default_currency})
-                          </span>
-                        `;
-                      })()
-                    : null}
-                </li>
-              `,
-            )}
-          </ul>
+      <nav class="tabs">
+        <button
+          type="button"
+          class="tab ${activeTab === "expenses" ? "tab-active" : ""}"
+          onClick=${() => setActiveTab("expenses")}
+        >
+          Expenses
+        </button>
+        <button
+          type="button"
+          class="tab ${activeTab === "settlements" ? "tab-active" : ""}"
+          onClick=${() => setActiveTab("settlements")}
+        >
+          Settlements
+        </button>
+        <button
+          type="button"
+          class="tab ${activeTab === "settings" ? "tab-active" : ""}"
+          onClick=${() => setActiveTab("settings")}
+        >
+          Settings
+        </button>
+      </nav>
 
-          <form
-            onSubmit=${handleAddParticipant}
-            class="island-form add-participant-form"
-          >
-            ${participantError
-              ? html`<p class="form-error">${participantError}</p>`
-              : null}
-            <div class="participant-row">
-              <input
-                type="text"
-                value=${newParticipant}
-                onInput=${(e: Event) =>
-                  setNewParticipant((e.target as HTMLInputElement).value)}
-                placeholder="New participant name"
-                required
+      <div class="tab-content">
+        ${activeTab === "expenses"
+          ? html`
+              <${ExpensesTab}
+                split=${{ id: data.id, participants: data.participants, default_currency: data.default_currency }}
+                expenses=${data.expenses}
+                onSaved=${loadData}
               />
-              <button type="submit" class="btn btn-primary">Add</button>
-            </div>
-          </form>
-        </div>
+            `
+          : null}
 
-        <div id="expenses">
-          <div class="expenses-header">
-            <h3>Expenses</h3>
-            <${ExpenseForm}
-              split=${{ id: data.id, participants: data.participants, default_currency: data.default_currency }}
-              onSaved=${loadData}
-            />
-          </div>
+        ${activeTab === "settlements"
+          ? html`
+              <${SettlementsTab}
+                balances=${data.balances}
+              />
+            `
+          : null}
 
-          ${data.expenses.length === 0
-            ? html`<p class="muted-text">No expenses yet. Add one above!</p>`
-            : html`
-                <table class="expenses-table">
-                  ${data.expenses.map(
-                    (exp) => html`
-                      <tr class="expense-row">
-                        <td>
-                          <span class="expense-name">${exp.name}</span>
-                          <span class="expense-amount"
-                            >${exp.amount.toFixed(2)}${exp.currency}</span
-                          >
-                          ${exp.original_currency !== exp.currency
-                            ? html`
-                                <span class="original-amount"
-                                  >(${exp.original_amount.toFixed(2)}${exp.original_currency})</span
-                                >
-                              `
-                            : null}
-                          <${ExpenseForm}
-                            split=${{ id: data.id, participants: data.participants, default_currency: data.default_currency }}
-                            expense=${exp}
-                            onSaved=${loadData}
-                          />
-                        </td>
-                      </tr>
-                      <tr class="expense-details-row">
-                        <td>
-                          Paid by <span class="highlight">${exp.payed_by}</span>
-                          for
-                          <span class="highlight"
-                            >${exp.payed_for.join(", ")}</span
-                          >
-                          on ${formatDate(exp.expense_date)}
-                        </td>
-                      </tr>
-                    `,
-                  )}
-                </table>
-              `}
-        </div>
-
-        <div id="balances">
-          <h3>Settlements</h3>
-          ${data.balances.length === 0
-            ? html`<p class="muted-text">All settled up!</p>`
-            : html`
-                <ul>
-                  ${data.balances.map(
-                    (b) => html`
-                      <li>
-                        <span class="highlight">${b.debtor}</span> owes
-                        <span class="highlight"
-                          >${b.amount.toFixed(2)}${b.currency}</span
-                        >
-                        to <span class="highlight">${b.creditor}</span>
-                      </li>
-                    `,
-                  )}
-                </ul>
-              `}
-        </div>
+        ${activeTab === "settings"
+          ? html`
+              <${SettingsTab}
+                participants=${data.participants}
+                individualBalances=${data.individualBalances}
+                defaultCurrency=${data.default_currency}
+                splitId=${splitId}
+                onSaved=${loadData}
+              />
+            `
+          : null}
       </div>
     </div>
   `;

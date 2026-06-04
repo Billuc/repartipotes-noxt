@@ -1,25 +1,14 @@
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 import { defineIsland } from "noxt";
-import { useFetch } from "noxt/runtime";
-import { CurrencySelectRaw } from "./CurrencySelect";
-
-interface Currency {
-  code: string;
-  name: string;
-  country: string;
-  country_code: string | null;
-}
+import CurrencySelect from "./CurrencySelect";
 
 function CreateSplit() {
   const [description, setDescription] = useState("");
   const [participants, setParticipants] = useState([""]);
   const [defaultCurrency, setDefaultCurrency] = useState("EUR");
-  const [isOpen, setIsOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useFetch<Currency[]>("/api/currencies");
 
   const addParticipant = () => {
     setParticipants([...participants, ""]);
@@ -75,89 +64,70 @@ function CreateSplit() {
 
   return html`
     <div class="create-split">
-      <button
-        type="button"
-        class="btn btn-primary"
-        onClick=${() => setIsOpen(!isOpen)}
-      >
-        ${isOpen ? "Cancel" : "New split"}
-      </button>
+      <form onSubmit=${handleSubmit}>
+        ${error ? html`<p class="form-error">${error}</p>` : null}
 
-      ${isOpen
-        ? html`
-            <form onSubmit=${handleSubmit} class="island-form">
-              ${error ? html`<p class="form-error">${error}</p>` : null}
+        <label>
+          Description:
+          <input
+            type="text"
+            value=${description}
+            onInput=${(e: Event) =>
+              setDescription((e.target as HTMLInputElement).value)}
+            placeholder="Trip to Paris"
+            required
+          />
+        </label>
 
-              <label>
-                Description:
+        <label>
+          Participants:
+          ${participants.map(
+            (p, i) => html`
+              <div class="participant-row">
                 <input
                   type="text"
-                  value=${description}
+                  value=${p}
                   onInput=${(e: Event) =>
-                    setDescription((e.target as HTMLInputElement).value)}
-                  placeholder="Trip to Paris"
+                    updateParticipant(i, (e.target as HTMLInputElement).value)}
+                  placeholder="Name"
                   required
                 />
-              </label>
+                ${participants.length > 1
+                  ? html`
+                      <button
+                        type="button"
+                        class="btn-icon"
+                        onClick=${() => removeParticipant(i)}
+                        title="Remove"
+                      >
+                        ×
+                      </button>
+                    `
+                  : null}
+              </div>
+            `,
+          )}
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onClick=${addParticipant}
+          >
+            + Add participant
+          </button>
+        </label>
 
-              <label>
-                Participants:
-                ${participants.map(
-                  (p, i) => html`
-                    <div class="participant-row">
-                      <input
-                        type="text"
-                        value=${p}
-                        onInput=${(e: Event) =>
-                          updateParticipant(
-                            i,
-                            (e.target as HTMLInputElement).value,
-                          )}
-                        placeholder="Name"
-                        required
-                      />
-                      ${participants.length > 1
-                        ? html`
-                            <button
-                              type="button"
-                              class="btn-icon"
-                              onClick=${() => removeParticipant(i)}
-                              title="Remove"
-                            >
-                              ×
-                            </button>
-                          `
-                        : null}
-                    </div>
-                  `,
-                )}
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  onClick=${addParticipant}
-                >
-                  + Add participant
-                </button>
-              </label>
+        <label>
+          Default currency:
+          <${CurrencySelect}
+            selected=${defaultCurrency}
+            onChange=${(code: string) => setDefaultCurrency(code)}
+          />
+        </label>
 
-              <label>
-                Default currency:
-                <${CurrencySelectRaw}
-                  selected=${defaultCurrency}
-                  onChange=${(code: string) => setDefaultCurrency(code)}
-                />
-              </label>
-
-              <button
-                type="submit"
-                class="btn btn-primary"
-                disabled=${submitting}
-              >
-                ${submitting ? "Creating..." : "Create split"}
-              </button>
-            </form>
-          `
-        : null}
+        <button type="submit" class="btn btn-primary" disabled=${submitting}>
+          ${submitting ? "Creating..." : "Create split"}
+        </button>
+      </form>
     </div>
   `;
 }

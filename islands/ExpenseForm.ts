@@ -1,7 +1,7 @@
 import { html } from "htm/preact";
 import { useState, useEffect } from "preact/hooks";
 import { defineIsland } from "noxt";
-import { CurrencySelectRaw } from "./CurrencySelect";
+import CurrencySelect from "./CurrencySelect";
 
 interface SplitMethod {
   method: "Evenly" | "Amounts";
@@ -41,19 +41,30 @@ function ExpenseForm({ split, expense, onSaved }: ExpenseFormProps) {
   const isEditing = !!expense;
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState(expense?.name ?? "");
-  const [amount, setAmount] = useState(expense?.original_amount?.toString() ?? "");
-  const [currency, setCurrency] = useState(expense?.original_currency ?? split.default_currency);
+  const [amount, setAmount] = useState(
+    expense?.original_amount?.toString() ?? "",
+  );
+  const [currency, setCurrency] = useState(
+    expense?.original_currency ?? split.default_currency,
+  );
   const [payedBy, setPayedBy] = useState(expense?.payed_by ?? "");
-  const [payedFor, setPayedFor] = useState<string[]>(expense?.payed_for ?? [...split.participants]);
+  const [payedFor, setPayedFor] = useState<string[]>(
+    expense?.payed_for ?? [...split.participants],
+  );
   const [splitMethod, setSplitMethod] = useState<"Evenly" | "Amounts">(
     expense?.split_method.method === "Amounts" ? "Amounts" : "Evenly",
   );
-  const [amountsValue, setAmountsValue] = useState<Record<string, string>>(() => {
-    if (expense?.split_method.method === "Amounts" && expense.split_method.details) {
-      return JSON.parse(expense.split_method.details);
-    }
-    return {};
-  });
+  const [amountsValue, setAmountsValue] = useState<Record<string, string>>(
+    () => {
+      if (
+        expense?.split_method.method === "Amounts" &&
+        expense.split_method.details
+      ) {
+        return JSON.parse(expense.split_method.details);
+      }
+      return {};
+    },
+  );
   const [dateTime, setDateTime] = useState(() => {
     if (expense?.expense_date) {
       return timestampToDateTimeLocal(expense.expense_date);
@@ -70,8 +81,13 @@ function ExpenseForm({ split, expense, onSaved }: ExpenseFormProps) {
     setCurrency(expense.original_currency);
     setPayedBy(expense.payed_by);
     setPayedFor([...expense.payed_for]);
-    setSplitMethod(expense.split_method.method === "Amounts" ? "Amounts" : "Evenly");
-    if (expense.split_method.method === "Amounts" && expense.split_method.details) {
+    setSplitMethod(
+      expense.split_method.method === "Amounts" ? "Amounts" : "Evenly",
+    );
+    if (
+      expense.split_method.method === "Amounts" &&
+      expense.split_method.details
+    ) {
       setAmountsValue(JSON.parse(expense.split_method.details));
     } else {
       setAmountsValue({});
@@ -153,7 +169,10 @@ function ExpenseForm({ split, expense, onSaved }: ExpenseFormProps) {
       });
 
       if (!res.ok) {
-        const errData = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+        const errData = (await res.json().catch(() => ({}))) as Record<
+          string,
+          unknown
+        >;
         throw new Error((errData.error as string) ?? "Failed to save expense");
       }
 
@@ -179,8 +198,13 @@ function ExpenseForm({ split, expense, onSaved }: ExpenseFormProps) {
       });
 
       if (!res.ok) {
-        const errData = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-        throw new Error((errData.error as string) ?? "Failed to delete expense");
+        const errData = (await res.json().catch(() => ({}))) as Record<
+          string,
+          unknown
+        >;
+        throw new Error(
+          (errData.error as string) ?? "Failed to delete expense",
+        );
       }
 
       setIsOpen(false);
@@ -220,7 +244,6 @@ function ExpenseForm({ split, expense, onSaved }: ExpenseFormProps) {
               Add expense
             </button>
           `}
-
       ${isOpen
         ? html`
             <div class="modal-overlay" onClick=${() => setIsOpen(false)}>
@@ -238,9 +261,7 @@ function ExpenseForm({ split, expense, onSaved }: ExpenseFormProps) {
                 <h3>${isEditing ? "Edit expense" : "New expense"}</h3>
 
                 <form onSubmit=${handleSubmit} class="island-form">
-                  ${error
-                    ? html`<p class="form-error">${error}</p>`
-                    : null}
+                  ${error ? html`<p class="form-error">${error}</p>` : null}
 
                   <label>
                     Name:
@@ -270,7 +291,7 @@ function ExpenseForm({ split, expense, onSaved }: ExpenseFormProps) {
 
                   <label>
                     Currency:
-                    <${CurrencySelectRaw}
+                    <${CurrencySelect}
                       selected=${currency}
                       onChange=${(code: string) => setCurrency(code)}
                     />

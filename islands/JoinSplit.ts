@@ -55,9 +55,7 @@ function JoinSplit() {
         }
       }),
     ).then((results) => {
-      setRecentSplits(
-        results.filter((s): s is SplitInfo => s !== null),
-      );
+      setRecentSplits(results.filter((s): s is SplitInfo => s !== null));
       setLoadingSplits(false);
     });
   }, []);
@@ -82,7 +80,7 @@ function JoinSplit() {
 
   return html`
     <div class="join-split">
-      <form onSubmit=${handleJoin} class="island-form">
+      <form onSubmit=${handleJoin}>
         <label>
           Split code:
           <input
@@ -128,9 +126,13 @@ function JoinSplit() {
             </div>
           `
         : null}
-      ${loadingSplits ? html`<p class="loading-text">Loading recent splits...</p>` : null}
+      ${loadingSplits
+        ? html`<p class="loading-text">Loading recent splits...</p>`
+        : null}
       ${!loadingSplits && recentSplits.length === 0
-        ? html`<p class="muted-text">No recent splits. Create or join one above!</p>`
+        ? html`<p class="muted-text">
+            No recent splits. Create or join one above!
+          </p>`
         : null}
     </div>
   `;

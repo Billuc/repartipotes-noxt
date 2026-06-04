@@ -15,18 +15,25 @@ interface CurrencySelectProps {
   onChange?: (code: string) => void;
 }
 
-function CurrencySelectRaw({ name, selected = "EUR", onChange }: CurrencySelectProps) {
+function CurrencySelect({
+  name,
+  selected = "EUR",
+  onChange,
+}: CurrencySelectProps) {
   const { data: currencies, loading } = useFetch<Currency[]>("/api/currencies");
 
   if (loading) {
-    return html`<select name=${name ?? ""} class="currency-select" required><option>Loading...</option></select>`;
+    return html`<select name=${name ?? ""} class="currency-select" required>
+      <option>Loading...</option>
+    </select>`;
   }
 
   return html`
     <select
       name=${name ?? ""}
       value=${selected}
-      onChange=${(e: Event) => onChange?.((e.target as HTMLSelectElement).value)}
+      onChange=${(e: Event) =>
+        onChange?.((e.target as HTMLSelectElement).value)}
       class="currency-select"
       autocomplete="off"
       required
@@ -50,5 +57,4 @@ function CurrencySelectRaw({ name, selected = "EUR", onChange }: CurrencySelectP
   `;
 }
 
-export default defineIsland(CurrencySelectRaw, import.meta.path);
-export { CurrencySelectRaw };
+export default defineIsland(CurrencySelect, import.meta.path);
