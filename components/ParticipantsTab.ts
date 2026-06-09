@@ -59,7 +59,7 @@ export default function SettingsTab({
         ${participants.map(
           (p) => html`
             <li>
-              ${p}
+              ${p}${" "}
               ${individualBalances[p] != null
                 ? (() => {
                     const displayBalance = -individualBalances[p]!;
@@ -85,7 +85,9 @@ export default function SettingsTab({
 
       <form onSubmit=${handleAddParticipant}>
         ${participantError
-          ? html`<div role="alert" data-variant="error">${participantError}</div>`
+          ? html`<div role="alert" data-variant="error">
+              ${participantError}
+            </div>`
           : null}
         <fieldset class="group">
           <input

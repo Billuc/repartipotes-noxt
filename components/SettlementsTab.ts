@@ -16,10 +16,8 @@ export default function SettlementsTab({ balances }: SettlementsTabProps) {
               ${balances.map(
                 (b) => html`
                   <li>
-                    <strong>${b.debtor}</strong> owes
-                    <strong
-                      >${b.amount.toFixed(2)}${b.currency}</strong
-                    >
+                    <strong>${b.debtor}</strong> owes${" "}
+                    <strong>${b.amount.toFixed(2)}${b.currency}</strong>${" "}
                     to <strong>${b.creditor}</strong>
                   </li>
                 `,

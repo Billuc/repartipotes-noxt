@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "preact/hooks";
 import { defineIsland } from "noxt";
 import ExpensesTab from "../components/ExpensesTab";
 import SettlementsTab from "../components/SettlementsTab";
-import SettingsTab from "../components/SettingsTab";
+import ParticipantsTab from "../components/ParticipantsTab.ts";
 import { storeId } from "../lib/splits";
 import type { SplitData } from "../lib/types.ts";
 
@@ -89,7 +89,7 @@ function SplitView() {
       <div role="tablist">
         <button role="tab">Expenses</button>
         <button role="tab">Settlements</button>
-        <button role="tab">Settings</button>
+        <button role="tab">Participants</button>
       </div>
       <div role="tabpanel">
         <${ExpensesTab}
@@ -105,7 +105,7 @@ function SplitView() {
         <${SettlementsTab} balances=${data.balances} />
       </div>
       <div role="tabpanel">
-        <${SettingsTab}
+        <${ParticipantsTab}
           participants=${data.participants}
           individualBalances=${data.individualBalances}
           defaultCurrency=${data.default_currency}
