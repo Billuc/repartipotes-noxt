@@ -54,12 +54,15 @@ export default function SettingsTab({
 
   return html`
     <div id="settings">
-      <h3>Participants</h3>
-      <ul>
+      <div class="hstack justify-between mb-4">
+        <h3>Participants</h3>
+      </div>
+
+      <div class="vstack gap-2 mb-6">
         ${participants.map(
           (p) => html`
-            <li>
-              ${p}${" "}
+            <div class="hstack justify-between p-4 card">
+              <span><strong>${p}</strong></span>
               ${individualBalances[p] != null
                 ? (() => {
                     const displayBalance = -individualBalances[p]!;
@@ -78,10 +81,10 @@ export default function SettingsTab({
                     `;
                   })()
                 : null}
-            </li>
+            </div>
           `,
         )}
-      </ul>
+      </div>
 
       <form onSubmit=${handleAddParticipant}>
         ${participantError

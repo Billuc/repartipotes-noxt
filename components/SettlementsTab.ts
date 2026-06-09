@@ -10,19 +10,19 @@ export default function SettlementsTab({ balances }: SettlementsTabProps) {
     <div id="balances">
       <h3>Settlements</h3>
       ${balances.length === 0
-        ? html`<p>All settled up!</p>`
+        ? html`<p class="text-light">All settled up!</p>`
         : html`
-            <ul>
+            <div class="vstack gap-2">
               ${balances.map(
                 (b) => html`
-                  <li>
+                  <div class="card p-4">
                     <strong>${b.debtor}</strong> owes${" "}
                     <strong>${b.amount.toFixed(2)}${b.currency}</strong>${" "}
                     to <strong>${b.creditor}</strong>
-                  </li>
+                  </div>
                 `,
               )}
-            </ul>
+            </div>
           `}
     </div>
   `;

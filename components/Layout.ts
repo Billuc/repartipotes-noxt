@@ -1,5 +1,6 @@
 import { html } from "htm/preact";
 import type { ComponentChildren } from "preact";
+import customStyles from "../assets/styles.css" with { type: "file" };
 
 interface LayoutProps {
   title: string;
@@ -19,25 +20,28 @@ export default function Layout({ title, children, styles }: LayoutProps) {
           href="https://unpkg.com/@knadh/oat/oat.min.css"
         />
         <script src="https://unpkg.com/@knadh/oat/oat.min.js" defer></script>
+        <link rel="stylesheet" href=${customStyles} />
         ${(styles ?? []).map(
           (s) => html`<link rel="stylesheet" href="${s}" />`,
         )}
       </head>
       <body>
         <div class="container">
-          <header>
+          <header class="site-header">
             <h1>
-              <a href="/" style="color:inherit;text-decoration:none"
+              <a href="/" class="unstyled" style="color:inherit"
                 >Répartipotes</a
               >
             </h1>
-            <p>
+            <p class="text-light">
               Split expenses with friends, simply and fairly.
             </p>
           </header>
           <main>${children}</main>
-          <footer>
-            <p><strong>Répartipotes</strong> — split expenses with friends</p>
+          <footer class="site-footer">
+            <p class="text-light">
+              <strong>Répartipotes</strong> — split expenses with friends
+            </p>
           </footer>
         </div>
       </body>

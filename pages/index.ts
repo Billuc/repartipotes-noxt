@@ -7,9 +7,11 @@ const RecentSplitsIsland = await prepareIsland(RecentSplits);
 
 export default function Home() {
   return html`
-    <${Layout} title="Répartipotes — Split expenses with friends" styles=${[]}>
-      <section>
-        <a href="/create-split">Create a split</a> or <a href="/join-split">Join a split</a>
+    <${Layout} title="Répartipotes — Split expenses with friends">
+      <section class="hstack gap-4">
+        <a href="/create-split" class="button outline">Create a split</a>
+        <span class="text-light">or</span>
+        <a href="/join-split" class="button outline">Join a split</a>
       </section>
 
       <hr />

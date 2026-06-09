@@ -7,7 +7,7 @@ const ShareSplitIsland = await prepareIsland(ShareSplit);
 
 export default function ShareSplitPage() {
   return html`
-    <${Layout} title="Share split — Répartipotes" styles=${[]}>
+    <${Layout} title="Share split — Répartipotes">
       <section>
         <${ShareSplitIsland} />
       </section>

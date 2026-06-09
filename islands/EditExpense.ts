@@ -376,10 +376,7 @@ function EditExpense() {
           </label>
         </div>
 
-        <div
-          class="hstack"
-          style="justify-content:flex-end;gap:var(--space-2);margin-top:var(--space-4)"
-        >
+        <div class="hstack justify-end gap-2 mt-4">
           <button type="submit" disabled=${submitting}>
             ${submitting ? "Saving..." : isEditing ? "Save" : "Add expense"}
           </button>

@@ -32,7 +32,7 @@ function ShareSplit() {
   const splitUrl = `${window.location.origin}/split?split_id=${splitId}`;
 
   return html`
-    <div class="vstack" style="gap:var(--space-4)">
+    <div class="vstack gap-4">
       <a href="/split?split_id=${splitId}" data-variant="secondary">
         ${"<"} Return to split
       </a>

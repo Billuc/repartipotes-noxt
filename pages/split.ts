@@ -7,7 +7,7 @@ const SplitViewIsland = await prepareIsland(SplitView);
 
 export default function SplitPage() {
   return html`
-    <${Layout} title="Split — Répartipotes" styles=${[]}>
+    <${Layout} title="Split — Répartipotes">
       <${SplitViewIsland} />
     </${Layout}>
   `;

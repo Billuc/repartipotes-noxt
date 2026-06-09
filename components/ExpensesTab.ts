@@ -17,13 +17,15 @@ interface ExpensesTabProps {
 export default function ExpensesTab({ split, expenses }: ExpensesTabProps) {
   return html`
     <div id="expenses">
-      <div class="hstack justify-between">
+      <div class="hstack justify-between mb-4">
         <h3>Expenses</h3>
-        <a href="/edit-expense?split_id=${split.id}"> Add expense </a>
+        <a href="/edit-expense?split_id=${split.id}" class="button small">
+          + Add expense
+        </a>
       </div>
 
       ${expenses.length === 0
-        ? html`<p>No expenses yet. Add one above!</p>`
+        ? html`<p class="text-light">No expenses yet. Add one above!</p>`
         : html`
             <div class="table">
               <table>

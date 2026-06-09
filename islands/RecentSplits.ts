@@ -51,14 +51,15 @@ function RecentSplits() {
       ? html`
           <section>
             <h4>Recent splits</h4>
-            <div class="flex flex-col">
+            <div class="vstack gap-2">
               ${recentSplits.map(
                 (s) => html`
-                  <div class="flex justify-between items-center">
+                  <div class="card p-4 hstack justify-between">
                     <a href="/split?split_id=${s.id}">${s.description}</a>
                     <button
                       type="button"
-                      class="ghost small"
+                      class="small"
+                      data-variant="danger"
                       onClick=${(e: Event) => handleRemove(e, s.id)}
                       title="Remove"
                     >
@@ -77,7 +78,9 @@ function RecentSplits() {
         </div>`
       : null}
     ${!loading && recentSplits.length === 0
-      ? html`<p>No recent splits. Create or join one above!</p>`
+      ? html`<p class="text-light">
+          No recent splits. Create or join one above!
+        </p>`
       : null}
   `;
 }

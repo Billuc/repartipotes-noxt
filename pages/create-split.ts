@@ -7,14 +7,16 @@ const CreateSplitIsland = await prepareIsland(CreateSplit);
 
 export default function CreateSplitPage() {
   return html`
-    <${Layout} title="New split — Répartipotes" styles=${[]}>
+    <${Layout} title="New split — Répartipotes">
       <section>
         <h2>Create a new split</h2>
-        <p style="margin-bottom: 2rem;">
+        <p class="text-light mb-6">
           Start a new group to track shared expenses. Add participants, choose
           a default currency, and share the split link with friends.
         </p>
-        <${CreateSplitIsland} />
+        <article class="card">
+          <${CreateSplitIsland} />
+        </article>
       </section>
     </${Layout}>
   `;

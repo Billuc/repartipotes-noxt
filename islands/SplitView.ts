@@ -60,10 +60,7 @@ function SplitView() {
   }, []);
 
   if (loading) {
-    return html`<div
-      class="vstack"
-      style="align-items:center;padding:var(--space-8)"
-    >
+    return html`<div class="vstack items-center p-4">
       <div aria-busy="true" data-spinner="large"></div>
       <p>Loading split...</p>
     </div>`;
