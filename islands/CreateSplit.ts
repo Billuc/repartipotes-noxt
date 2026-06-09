@@ -63,72 +63,70 @@ function CreateSplit() {
   };
 
   return html`
-    <div class="create-split">
-      <form onSubmit=${handleSubmit}>
-        ${error ? html`<p class="form-error">${error}</p>` : null}
+    <form onSubmit=${handleSubmit}>
+      ${error ? html`<div role="alert" data-variant="error">${error}</div>` : null}
 
-        <label>
-          Description:
-          <input
-            type="text"
-            value=${description}
-            onInput=${(e: Event) =>
-              setDescription((e.target as HTMLInputElement).value)}
-            placeholder="Trip to Paris"
-            required
-          />
-        </label>
+      <label data-field>
+        Description:
+        <input
+          type="text"
+          value=${description}
+          onInput=${(e: Event) =>
+            setDescription((e.target as HTMLInputElement).value)}
+          placeholder="Trip to Paris"
+          required
+        />
+      </label>
 
-        <label>
-          Participants:
-          ${participants.map(
-            (p, i) => html`
-              <div class="participant-row">
-                <input
-                  type="text"
-                  value=${p}
-                  onInput=${(e: Event) =>
-                    updateParticipant(i, (e.target as HTMLInputElement).value)}
-                  placeholder="Name"
-                  required
-                />
-                ${participants.length > 1
-                  ? html`
-                      <button
-                        type="button"
-                        class="btn-icon"
-                        onClick=${() => removeParticipant(i)}
-                        title="Remove"
-                      >
-                        ×
-                      </button>
-                    `
-                  : null}
-              </div>
-            `,
-          )}
-          <button
-            type="button"
-            class="btn btn-secondary"
-            onClick=${addParticipant}
-          >
-            + Add participant
-          </button>
-        </label>
-
-        <label>
-          Default currency:
-          <${CurrencySelect}
-            selected=${defaultCurrency}
-            onChange=${(code: string) => setDefaultCurrency(code)}
-          />
-        </label>
-
-        <button type="submit" class="btn btn-primary" disabled=${submitting}>
-          ${submitting ? "Creating..." : "Create split"}
+      <div data-field>
+        <label>Participants:</label>
+        ${participants.map(
+          (p, i) => html`
+            <fieldset class="group">
+              <input
+                type="text"
+                value=${p}
+                onInput=${(e: Event) =>
+                  updateParticipant(i, (e.target as HTMLInputElement).value)}
+                placeholder="Name"
+                required
+              />
+              ${participants.length > 1
+                ? html`
+                    <button
+                      type="button"
+                      class="ghost"
+                      onClick=${() => removeParticipant(i)}
+                      title="Remove"
+                    >
+                      ×
+                    </button>
+                  `
+                : null}
+            </fieldset>
+          `,
+        )}
+        <button
+          type="button"
+          class="outline"
+          onClick=${addParticipant}
+        >
+          + Add participant
         </button>
-      </form>
-    </div>
+      </div>
+
+      <label data-field>
+        Default currency:
+        <${CurrencySelect}
+          selected=${defaultCurrency}
+          onChange=${(code: string) => setDefaultCurrency(code)}
+        />
+      </label>
+
+      <button type="submit" disabled=${submitting}>
+        ${submitting ? "Creating..." : "Create split"}
+      </button>
+    </form>
   `;
 }
 

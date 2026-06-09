@@ -9,7 +9,13 @@ interface SettingsTabProps {
   onSaved: () => void;
 }
 
-export default function SettingsTab({ participants, individualBalances, defaultCurrency, splitId, onSaved }: SettingsTabProps) {
+export default function SettingsTab({
+  participants,
+  individualBalances,
+  defaultCurrency,
+  splitId,
+  onSaved,
+}: SettingsTabProps) {
   const [newParticipant, setNewParticipant] = useState("");
   const [participantError, setParticipantError] = useState<string | null>(null);
 
@@ -27,15 +33,22 @@ export default function SettingsTab({ participants, individualBalances, defaultC
       });
 
       if (!res.ok) {
-        const errData = (await res.json().catch(() => ({}))) as Record<string, unknown>;
-        throw new Error((errData.error as string) ?? "Failed to add participant");
+        const errData = (await res.json().catch(() => ({}))) as Record<
+          string,
+          unknown
+        >;
+        throw new Error(
+          (errData.error as string) ?? "Failed to add participant",
+        );
       }
 
       setNewParticipant("");
       setParticipantError(null);
       onSaved();
     } catch (err) {
-      setParticipantError(err instanceof Error ? err.message : "Failed to add participant");
+      setParticipantError(
+        err instanceof Error ? err.message : "Failed to add participant",
+      );
     }
   };
 
@@ -53,11 +66,14 @@ export default function SettingsTab({ participants, individualBalances, defaultC
                     if (displayBalance === 0) return null;
                     return html`
                       <span
-                        class="individual-balance ${displayBalance > 0
-                          ? "positive"
-                          : "negative"}"
+                        class="badge"
+                        data-variant=${displayBalance > 0
+                          ? "success"
+                          : "danger"}
                       >
-                        (${displayBalance > 0 ? "+" : ""}${displayBalance.toFixed(2)}${defaultCurrency})
+                        ${displayBalance > 0
+                          ? "+"
+                          : ""}${displayBalance.toFixed(2)}${defaultCurrency}
                       </span>
                     `;
                   })()
@@ -67,14 +83,11 @@ export default function SettingsTab({ participants, individualBalances, defaultC
         )}
       </ul>
 
-      <form
-        onSubmit=${handleAddParticipant}
-        class="island-form add-participant-form"
-      >
+      <form onSubmit=${handleAddParticipant}>
         ${participantError
-          ? html`<p class="form-error">${participantError}</p>`
+          ? html`<div role="alert" data-variant="error">${participantError}</div>`
           : null}
-        <div class="participant-row">
+        <fieldset class="group">
           <input
             type="text"
             value=${newParticipant}
@@ -83,8 +96,8 @@ export default function SettingsTab({ participants, individualBalances, defaultC
             placeholder="New participant name"
             required
           />
-          <button type="submit" class="btn btn-primary">Add</button>
-        </div>
+          <button type="submit">Add</button>
+        </fieldset>
       </form>
     </div>
   `;

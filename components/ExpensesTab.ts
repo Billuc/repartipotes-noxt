@@ -37,7 +37,7 @@ interface ExpensesTabProps {
 export default function ExpensesTab({ split, expenses, onSaved }: ExpensesTabProps) {
   return html`
     <div id="expenses">
-      <div class="expenses-header">
+      <div class="hstack justify-between">
         <h3>Expenses</h3>
         <${ExpenseForm}
           split=${split}
@@ -46,44 +46,50 @@ export default function ExpensesTab({ split, expenses, onSaved }: ExpensesTabPro
       </div>
 
       ${expenses.length === 0
-        ? html`<p class="muted-text">No expenses yet. Add one above!</p>`
+        ? html`<p>No expenses yet. Add one above!</p>`
         : html`
-            <table class="expenses-table">
-              ${expenses.map(
-                (exp) => html`
-                  <tr class="expense-row">
-                    <td>
-                      <span class="expense-name">${exp.name}</span>
-                      <span class="expense-amount"
-                        >${exp.amount.toFixed(2)}${exp.currency}</span
-                      >
-                      ${exp.original_currency !== exp.currency
-                        ? html`
-                            <span class="original-amount"
-                              >(${exp.original_amount.toFixed(2)}${exp.original_currency})</span
-                            >
-                          `
-                        : null}
-                      <${ExpenseForm}
-                        split=${split}
-                        expense=${exp}
-                        onSaved=${onSaved}
-                      />
-                    </td>
+            <div class="table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Payer</th>
+                    <th>Date</th>
+                    <th></th>
                   </tr>
-                  <tr class="expense-details-row">
-                    <td>
-                      Paid by <span class="highlight">${exp.payed_by}</span>
-                      for
-                      <span class="highlight"
-                        >${exp.payed_for.join(", ")}</span
-                      >
-                      on ${formatDate(exp.expense_date)}
-                    </td>
-                  </tr>
-                `,
-              )}
-            </table>
+                </thead>
+                <tbody>
+                  ${expenses.map(
+                    (exp) => html`
+                      <tr>
+                        <td>${exp.name}</td>
+                        <td>
+                          ${exp.amount.toFixed(2)}${exp.currency}
+                          ${exp.original_currency !== exp.currency
+                            ? html`<br /><small
+                                >(${exp.original_amount.toFixed(2)}${exp.original_currency})</small
+                              >`
+                            : null}
+                        </td>
+                        <td>
+                          <strong>${exp.payed_by}</strong>
+                          <br /><small>for ${exp.payed_for.join(", ")}</small>
+                        </td>
+                        <td>${formatDate(exp.expense_date)}</td>
+                        <td>
+                          <${ExpenseForm}
+                            split=${split}
+                            expense=${exp}
+                            onSaved=${onSaved}
+                          />
+                        </td>
+                      </tr>
+                    `,
+                  )}
+                </tbody>
+              </table>
+            </div>
           `}
     </div>
   `;

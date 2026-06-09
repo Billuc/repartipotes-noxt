@@ -61,7 +61,6 @@ function SplitView() {
   const [refreshCounter, setRefreshCounter] = useState(0);
   const [showShare, setShowShare] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<"expenses" | "settlements" | "settings">("expenses");
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("split_id");
@@ -124,39 +123,45 @@ function SplitView() {
       : "";
 
   if (loading) {
-    return html`<div class="split-view"><p class="loading-text">Loading split...</p></div>`;
+    return html`<div class="vstack" style="align-items:center;padding:var(--space-8)">
+      <div aria-busy="true" data-spinner="large"></div>
+      <p>Loading split...</p>
+    </div>`;
   }
 
   if (error) {
-    return html`<div class="split-view"><p class="form-error">${error}</p></div>`;
+    return html`<div role="alert" data-variant="error">${error}</div>`;
   }
 
   if (!data) {
-    return html`<div class="split-view"><p class="muted-text">No split data found.</p></div>`;
+    return html`<p>No split data found.</p>`;
   }
 
   return html`
-    <div class="split-view">
-      <div class="split-header">
-        <h2>${data.description}</h2>
-        <button
-          type="button"
-          class="btn btn-secondary"
-          onClick=${() => setShowShare(!showShare)}
-        >
-          Share
-        </button>
-      </div>
+    <div class="hstack justify-between">
+      <h2>${data.description}</h2>
+      <button
+        type="button"
+        data-variant="secondary"
+        onClick=${() => setShowShare(!showShare)}
+      >
+        Share
+      </button>
+    </div>
 
-      ${showShare
-        ? html`
-            <div class="share-popover">
+    ${showShare
+      ? html`
+          <article class="card">
+            <header>
+              <h3>Share this split</h3>
+            </header>
+            <div class="vstack">
               <p>
                 Share this link with friends:<br />
                 <a href=${splitUrl} target="_blank">${splitUrl}</a>
                 <button
                   type="button"
-                  class="btn btn-secondary"
+                  class="outline small"
                   onClick=${() => copyToClipboard(splitUrl)}
                 >
                   ${copied ? "Copied!" : "Copy link"}
@@ -167,79 +172,54 @@ function SplitView() {
                 <strong>${data.id}</strong>
                 <button
                   type="button"
-                  class="btn btn-secondary"
+                  class="outline small"
                   onClick=${() => copyToClipboard(data.id)}
                 >
                   ${copied ? "Copied!" : "Copy code"}
                 </button>
               </p>
+            </div>
+            <footer>
               <button
                 type="button"
-                class="btn-close"
+                class="ghost small"
                 onClick=${() => setShowShare(false)}
               >
                 Close
               </button>
-            </div>
-          `
-        : null}
+            </footer>
+          </article>
+        `
+      : null}
 
-      <nav class="tabs">
-        <button
-          type="button"
-          class="tab ${activeTab === "expenses" ? "tab-active" : ""}"
-          onClick=${() => setActiveTab("expenses")}
-        >
-          Expenses
-        </button>
-        <button
-          type="button"
-          class="tab ${activeTab === "settlements" ? "tab-active" : ""}"
-          onClick=${() => setActiveTab("settlements")}
-        >
-          Settlements
-        </button>
-        <button
-          type="button"
-          class="tab ${activeTab === "settings" ? "tab-active" : ""}"
-          onClick=${() => setActiveTab("settings")}
-        >
-          Settings
-        </button>
-      </nav>
-
-      <div class="tab-content">
-        ${activeTab === "expenses"
-          ? html`
-              <${ExpensesTab}
-                split=${{ id: data.id, participants: data.participants, default_currency: data.default_currency }}
-                expenses=${data.expenses}
-                onSaved=${loadData}
-              />
-            `
-          : null}
-
-        ${activeTab === "settlements"
-          ? html`
-              <${SettlementsTab}
-                balances=${data.balances}
-              />
-            `
-          : null}
-
-        ${activeTab === "settings"
-          ? html`
-              <${SettingsTab}
-                participants=${data.participants}
-                individualBalances=${data.individualBalances}
-                defaultCurrency=${data.default_currency}
-                splitId=${splitId}
-                onSaved=${loadData}
-              />
-            `
-          : null}
+    <ot-tabs>
+      <div role="tablist">
+        <button role="tab">Expenses</button>
+        <button role="tab">Settlements</button>
+        <button role="tab">Settings</button>
       </div>
-    </div>
+      <div role="tabpanel">
+        <${ExpensesTab}
+          split=${{ id: data.id, participants: data.participants, default_currency: data.default_currency }}
+          expenses=${data.expenses}
+          onSaved=${loadData}
+        />
+      </div>
+      <div role="tabpanel">
+        <${SettlementsTab}
+          balances=${data.balances}
+        />
+      </div>
+      <div role="tabpanel">
+        <${SettingsTab}
+          participants=${data.participants}
+          individualBalances=${data.individualBalances}
+          defaultCurrency=${data.default_currency}
+          splitId=${splitId}
+          onSaved=${loadData}
+        />
+      </div>
+    </ot-tabs>
   `;
 }
 

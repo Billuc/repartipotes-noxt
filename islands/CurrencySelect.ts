@@ -23,7 +23,7 @@ function CurrencySelect({
   const { data: currencies, loading } = useFetch<Currency[]>("/api/currencies");
 
   if (loading) {
-    return html`<select name=${name ?? ""} class="currency-select" required>
+    return html`<select name=${name ?? ""} required>
       <option>Loading...</option>
     </select>`;
   }
@@ -34,7 +34,6 @@ function CurrencySelect({
       value=${selected}
       onChange=${(e: Event) =>
         onChange?.((e.target as HTMLSelectElement).value)}
-      class="currency-select"
       autocomplete="off"
       required
     >

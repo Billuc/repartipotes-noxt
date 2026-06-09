@@ -224,190 +224,195 @@ function ExpenseForm({ split, expense, onSaved }: ExpenseFormProps) {
   };
 
   return html`
-    <div class="expense-form-wrapper">
-      ${isEditing
-        ? html`
-            <button
-              type="button"
-              class="btn btn-ghost"
-              onClick=${() => setIsOpen(!isOpen)}
-            >
-              Edit
-            </button>
-          `
-        : html`
-            <button
-              type="button"
-              class="btn btn-primary"
-              onClick=${() => setIsOpen(!isOpen)}
-            >
-              Add expense
-            </button>
-          `}
-      ${isOpen
-        ? html`
-            <div class="modal-overlay" onClick=${() => setIsOpen(false)}>
-              <div
-                class="modal-content"
-                onClick=${(e: Event) => e.stopPropagation()}
-              >
-                <button
-                  type="button"
-                  class="btn-close"
-                  onClick=${() => setIsOpen(false)}
-                >
-                  ×
-                </button>
-                <h3>${isEditing ? "Edit expense" : "New expense"}</h3>
+    ${isEditing
+      ? html`
+          <button
+            type="button"
+            class="ghost small"
+            onClick=${() => setIsOpen(!isOpen)}
+          >
+            Edit
+          </button>
+        `
+      : html`
+          <button
+            type="button"
+            onClick=${() => setIsOpen(!isOpen)}
+          >
+            Add expense
+          </button>
+        `}
+    ${isOpen
+      ? html`
+          <dialog open=${true} closedby="any" onClose=${() => setIsOpen(false)}>
+            <form method="dialog" onSubmit=${handleSubmit}>
+              <header>
+                <h3>
+                  ${isEditing ? "Edit expense" : "New expense"}
+                  <button
+                    type="button"
+                    class="ghost"
+                    onClick=${() => setIsOpen(false)}
+                    style="float:right"
+                  >
+                    ×
+                  </button>
+                </h3>
+              </header>
 
-                <form onSubmit=${handleSubmit} class="island-form">
-                  ${error ? html`<p class="form-error">${error}</p>` : null}
+              <div class="vstack">
+                ${error ? html`<div role="alert" data-variant="error">${error}</div>` : null}
 
-                  <label>
-                    Name:
-                    <input
-                      type="text"
-                      value=${name}
-                      onInput=${(e: Event) =>
-                        setName((e.target as HTMLInputElement).value)}
-                      placeholder="Expense name"
-                      required
-                    />
-                  </label>
+                <label data-field>
+                  Name:
+                  <input
+                    type="text"
+                    value=${name}
+                    onInput=${(e: Event) =>
+                      setName((e.target as HTMLInputElement).value)}
+                    placeholder="Expense name"
+                    required
+                  />
+                </label>
 
-                  <label>
-                    Amount:
-                    <input
-                      type="number"
-                      value=${amount}
-                      onInput=${(e: Event) =>
-                        setAmount((e.target as HTMLInputElement).value)}
-                      step="0.01"
-                      min="0"
-                      placeholder="0.00"
-                      required
-                    />
-                  </label>
+                <label data-field>
+                  Amount:
+                  <input
+                    type="number"
+                    value=${amount}
+                    onInput=${(e: Event) =>
+                      setAmount((e.target as HTMLInputElement).value)}
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    required
+                  />
+                </label>
 
-                  <label>
-                    Currency:
-                    <${CurrencySelect}
-                      selected=${currency}
-                      onChange=${(code: string) => setCurrency(code)}
-                    />
-                  </label>
+                <label data-field>
+                  Currency:
+                  <${CurrencySelect}
+                    selected=${currency}
+                    onChange=${(code: string) => setCurrency(code)}
+                  />
+                </label>
 
-                  <label>
-                    Paid by:
-                    <select
-                      value=${payedBy}
-                      onChange=${(e: Event) =>
-                        setPayedBy((e.target as HTMLSelectElement).value)}
-                      required
-                    >
-                      <option value="">Select payer</option>
-                      ${split.participants.map(
-                        (p) => html`
-                          <option value=${p} selected=${p === payedBy}>
-                            ${p}
-                          </option>
-                        `,
-                      )}
-                    </select>
-                  </label>
-
-                  <label>
-                    Split method:
-                    <select
-                      value=${splitMethod}
-                      onChange=${(e: Event) =>
-                        setSplitMethod(
-                          (e.target as HTMLSelectElement).value as
-                            | "Evenly"
-                            | "Amounts",
-                        )}
-                    >
-                      <option value="Evenly">Evenly</option>
-                      <option value="Amounts">By amount</option>
-                    </select>
-                  </label>
-
-                  <fieldset>
-                    <legend>Split between:</legend>
+                <label data-field>
+                  Paid by:
+                  <select
+                    value=${payedBy}
+                    onChange=${(e: Event) =>
+                      setPayedBy((e.target as HTMLSelectElement).value)}
+                    required
+                  >
+                    <option value="">Select payer</option>
                     ${split.participants.map(
                       (p) => html`
-                        <div class="participant-amount-row">
-                          <label class="checkbox-label">
-                            <input
-                              type="checkbox"
-                              checked=${payedFor.includes(p)}
-                              onChange=${() => toggleParticipant(p)}
-                            />
-                            <span>${p}</span>
-                          </label>
-                          <input
-                            type="number"
-                            value=${getAmountFor(p)}
-                            onInput=${(e: Event) => {
-                              if (splitMethod === "Amounts") {
-                                updateAmountValue(
-                                  p,
-                                  (e.target as HTMLInputElement).value,
-                                );
-                              }
-                            }}
-                            class="participant-amount-input"
-                            min="0"
-                            step="0.01"
-                            disabled=${splitMethod === "Evenly" ||
-                            !payedFor.includes(p)}
-                          />
-                        </div>
+                        <option value=${p} selected=${p === payedBy}>
+                          ${p}
+                        </option>
                       `,
                     )}
-                  </fieldset>
+                  </select>
+                </label>
 
-                  <label>
-                    Date:
-                    <input
-                      type="datetime-local"
-                      value=${dateTime}
-                      onChange=${(e: Event) =>
-                        setDateTime((e.target as HTMLInputElement).value)}
-                    />
-                  </label>
+                <label data-field>
+                  Split method:
+                  <select
+                    value=${splitMethod}
+                    onChange=${(e: Event) =>
+                      setSplitMethod(
+                        (e.target as HTMLSelectElement).value as
+                          | "Evenly"
+                          | "Amounts",
+                      )}
+                  >
+                    <option value="Evenly">Evenly</option>
+                    <option value="Amounts">By amount</option>
+                  </select>
+                </label>
 
-                  <div class="form-actions">
-                    <button
-                      type="submit"
-                      class="btn btn-primary"
-                      disabled=${submitting}
-                    >
-                      ${submitting
-                        ? "Saving..."
-                        : isEditing
-                          ? "Save"
-                          : "Add expense"}
-                    </button>
-                    ${isEditing
-                      ? html`
-                          <button
-                            type="button"
-                            class="btn btn-danger"
-                            onClick=${handleDelete}
-                            disabled=${submitting}
-                          >
-                            Delete
-                          </button>
-                        `
-                      : null}
-                  </div>
-                </form>
+                <fieldset>
+                  <legend>Split between:</legend>
+                  ${split.participants.map(
+                    (p) => html`
+                      <div class="hstack">
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked=${payedFor.includes(p)}
+                            onChange=${() => toggleParticipant(p)}
+                          />
+                          ${p}
+                        </label>
+                        <input
+                          type="number"
+                          value=${getAmountFor(p)}
+                          onInput=${(e: Event) => {
+                            if (splitMethod === "Amounts") {
+                              updateAmountValue(
+                                p,
+                                (e.target as HTMLInputElement).value,
+                              );
+                            }
+                          }}
+                          min="0"
+                          step="0.01"
+                          disabled=${splitMethod === "Evenly" ||
+                          !payedFor.includes(p)}
+                          style="width:100px"
+                        />
+                      </div>
+                    `,
+                  )}
+                </fieldset>
+
+                <label data-field>
+                  Date:
+                  <input
+                    type="datetime-local"
+                    value=${dateTime}
+                    onChange=${(e: Event) =>
+                      setDateTime((e.target as HTMLInputElement).value)}
+                  />
+                </label>
               </div>
-            </div>
-          `
-        : null}
-    </div>
+
+              <footer class="hstack" style="justify-content:flex-end;gap:var(--space-2)">
+                <button
+                  type="submit"
+                  disabled=${submitting}
+                >
+                  ${submitting
+                    ? "Saving..."
+                    : isEditing
+                      ? "Save"
+                      : "Add expense"}
+                </button>
+                ${isEditing
+                  ? html`
+                      <button
+                        type="button"
+                        data-variant="danger"
+                        onClick=${handleDelete}
+                        disabled=${submitting}
+                      >
+                        Delete
+                      </button>
+                    `
+                  : null}
+                <button
+                  type="button"
+                  class="outline"
+                  onClick=${() => setIsOpen(false)}
+                >
+                  Cancel
+                </button>
+              </footer>
+            </form>
+          </dialog>
+        `
+      : null}
   `;
 }
 

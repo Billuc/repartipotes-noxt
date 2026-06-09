@@ -16,17 +16,17 @@ export default function SettlementsTab({ balances }: SettlementsTabProps) {
     <div id="balances">
       <h3>Settlements</h3>
       ${balances.length === 0
-        ? html`<p class="muted-text">All settled up!</p>`
+        ? html`<p>All settled up!</p>`
         : html`
             <ul>
               ${balances.map(
                 (b) => html`
                   <li>
-                    <span class="highlight">${b.debtor}</span> owes
-                    <span class="highlight"
-                      >${b.amount.toFixed(2)}${b.currency}</span
+                    <strong>${b.debtor}</strong> owes
+                    <strong
+                      >${b.amount.toFixed(2)}${b.currency}</strong
                     >
-                    to <span class="highlight">${b.creditor}</span>
+                    to <strong>${b.creditor}</strong>
                   </li>
                 `,
               )}
