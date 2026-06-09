@@ -1,5 +1,4 @@
 import { html } from "htm/preact";
-import ExpenseForm from "../islands/ExpenseForm";
 
 interface SplitMethod {
   method: "Evenly" | "Amounts";
@@ -31,18 +30,14 @@ function formatDate(ts: number): string {
 interface ExpensesTabProps {
   split: { id: string; participants: string[]; default_currency: string };
   expenses: Expense[];
-  onSaved: () => void;
 }
 
-export default function ExpensesTab({ split, expenses, onSaved }: ExpensesTabProps) {
+export default function ExpensesTab({ split, expenses }: ExpensesTabProps) {
   return html`
     <div id="expenses">
       <div class="hstack justify-between">
         <h3>Expenses</h3>
-        <${ExpenseForm}
-          split=${split}
-          onSaved=${onSaved}
-        />
+        <a href="/edit-expense?split_id=${split.id}"> Add expense </a>
       </div>
 
       ${expenses.length === 0
@@ -68,8 +63,10 @@ export default function ExpensesTab({ split, expenses, onSaved }: ExpensesTabPro
                           ${exp.amount.toFixed(2)}${exp.currency}
                           ${exp.original_currency !== exp.currency
                             ? html`<br /><small
-                                >(${exp.original_amount.toFixed(2)}${exp.original_currency})</small
-                              >`
+                                  >(${exp.original_amount.toFixed(
+                                    2,
+                                  )}${exp.original_currency})</small
+                                >`
                             : null}
                         </td>
                         <td>

@@ -134,7 +134,6 @@ function SplitView() {
             default_currency: data.default_currency,
           }}
           expenses=${data.expenses}
-          onSaved=${loadData}
         />
       </div>
       <div role="tabpanel">

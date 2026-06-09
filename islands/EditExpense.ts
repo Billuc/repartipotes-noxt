@@ -53,7 +53,6 @@ function EditExpense() {
   const [splitId, setSplitId] = useState<string | null>(null);
   const [expenseId, setExpenseId] = useState<number | null>(null);
   const [splitData, setSplitData] = useState<SplitData | null>(null);
-  const [expense, setExpense] = useState<Expense | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,15 +69,17 @@ function EditExpense() {
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
+  const isEditing = expenseId !== null;
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sId = params.get("split_id");
     const eId = params.get("expense_id");
-    if (sId && eId) {
+    if (sId) {
       setSplitId(sId);
-      setExpenseId(Number(eId));
+      if (eId) setExpenseId(Number(eId));
     } else {
-      setError("Missing split_id or expense_id");
+      setError("Missing split_id");
       setLoading(false);
     }
   }, []);
@@ -99,26 +100,31 @@ function EditExpense() {
         const json = (await res.json()) as SplitData;
         if (!cancelled) {
           setSplitData(json);
-          const found = json.expenses.find((e) => e.id === expenseId);
-          if (found) {
-            setExpense(found);
-            setName(found.name);
-            setAmount(found.original_amount.toString());
-            setCurrency(found.original_currency);
-            setPayedBy(found.payed_by);
-            setPayedFor([...found.payed_for]);
-            setSplitMethod(
-              found.split_method.method === "Amounts" ? "Amounts" : "Evenly",
-            );
-            if (
-              found.split_method.method === "Amounts" &&
-              found.split_method.details
-            ) {
-              setAmountsValue(JSON.parse(found.split_method.details));
+          setCurrency(json.default_currency);
+          setPayedFor([...json.participants]);
+          setDateTime(timestampToDateTimeLocal(Math.floor(Date.now() / 1000)));
+
+          if (expenseId) {
+            const found = json.expenses.find((e) => e.id === expenseId);
+            if (found) {
+              setName(found.name);
+              setAmount(found.original_amount.toString());
+              setCurrency(found.original_currency);
+              setPayedBy(found.payed_by);
+              setPayedFor([...found.payed_for]);
+              setSplitMethod(
+                found.split_method.method === "Amounts" ? "Amounts" : "Evenly",
+              );
+              if (
+                found.split_method.method === "Amounts" &&
+                found.split_method.details
+              ) {
+                setAmountsValue(JSON.parse(found.split_method.details));
+              }
+              setDateTime(timestampToDateTimeLocal(found.expense_date));
+            } else {
+              setError("Expense not found");
             }
-            setDateTime(timestampToDateTimeLocal(found.expense_date));
-          } else {
-            setError("Expense not found");
           }
         }
       } catch (err) {
@@ -200,8 +206,11 @@ function EditExpense() {
     };
 
     try {
-      const res = await fetch(`/api/expenses/${expenseId}`, {
-        method: "PUT",
+      const url = isEditing ? `/api/expenses/${expenseId}` : "/api/expenses";
+      const method = isEditing ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
@@ -223,12 +232,12 @@ function EditExpense() {
   };
 
   const handleDelete = async () => {
-    if (!expense) return;
+    if (!expenseId) return;
     if (!confirm("Are you sure you want to delete this expense?")) return;
 
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/expenses/${expense.id}`, {
+      const res = await fetch(`/api/expenses/${expenseId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ split_id: splitId }),
@@ -265,7 +274,7 @@ function EditExpense() {
       style="align-items:center;padding:var(--space-8)"
     >
       <div aria-busy="true" data-spinner="large"></div>
-      <p>Loading expense...</p>
+      <p>Loading...</p>
     </div>`;
   }
 
@@ -273,8 +282,8 @@ function EditExpense() {
     return html`<div role="alert" data-variant="error">${error}</div>`;
   }
 
-  if (!expense || !splitData) {
-    return html`<p>No expense data found.</p>`;
+  if (!splitData) {
+    return html`<p>No split data found.</p>`;
   }
 
   return html`
@@ -283,7 +292,7 @@ function EditExpense() {
         ${"<"} Return to split
       </a>
 
-      <h2>Edit expense</h2>
+      <h2>${isEditing ? "Edit expense" : "New expense"}</h2>
 
       <form onSubmit=${handleSubmit}>
         <div class="vstack">
@@ -407,16 +416,20 @@ function EditExpense() {
           style="justify-content:flex-end;gap:var(--space-2);margin-top:var(--space-4)"
         >
           <button type="submit" disabled=${submitting}>
-            ${submitting ? "Saving..." : "Save"}
+            ${submitting ? "Saving..." : isEditing ? "Save" : "Add expense"}
           </button>
-          <button
-            type="button"
-            data-variant="danger"
-            onClick=${handleDelete}
-            disabled=${submitting}
-          >
-            Delete
-          </button>
+          ${isEditing
+            ? html`
+                <button
+                  type="button"
+                  data-variant="danger"
+                  onClick=${handleDelete}
+                  disabled=${submitting}
+                >
+                  Delete
+                </button>
+              `
+            : null}
           <a
             href="/split?split_id=${splitId}"
             class="outline"
