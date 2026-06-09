@@ -5,42 +5,7 @@ import ExpensesTab from "../components/ExpensesTab";
 import SettlementsTab from "../components/SettlementsTab";
 import SettingsTab from "../components/SettingsTab";
 import { storeId } from "../lib/splits";
-
-interface SplitMethod {
-  method: "Evenly" | "Amounts";
-  details: string;
-}
-
-interface Expense {
-  id: number;
-  split_id: string;
-  name: string;
-  amount: number;
-  currency: string;
-  original_amount: number;
-  original_currency: string;
-  payed_by: string;
-  payed_for: string[];
-  expense_date: number;
-  split_method: SplitMethod;
-}
-
-interface Balance {
-  debtor: string;
-  amount: number;
-  currency: string;
-  creditor: string;
-}
-
-interface SplitData {
-  id: string;
-  description: string;
-  participants: string[];
-  default_currency: string;
-  expenses: Expense[];
-  individualBalances: Record<string, number>;
-  balances: Balance[];
-}
+import type { SplitData } from "../lib/types.ts";
 
 function SplitView() {
   const [splitId, setSplitId] = useState<string | null>(null);

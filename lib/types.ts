@@ -66,3 +66,13 @@ export interface Balance {
   currency: string;
   creditor: string;
 }
+
+export interface SplitData {
+  id: string;
+  description: string;
+  participants: string[];
+  default_currency: string;
+  expenses: Expense[];
+  individualBalances: Record<string, number>;
+  balances: Balance[];
+}

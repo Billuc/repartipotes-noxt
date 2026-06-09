@@ -1,23 +1,5 @@
 import { html } from "htm/preact";
-
-interface SplitMethod {
-  method: "Evenly" | "Amounts";
-  details: string;
-}
-
-interface Expense {
-  id: number;
-  split_id: string;
-  name: string;
-  amount: number;
-  currency: string;
-  original_amount: number;
-  original_currency: string;
-  payed_by: string;
-  payed_for: string[];
-  expense_date: number;
-  split_method: SplitMethod;
-}
+import type { Expense } from "../lib/types.ts";
 
 function formatDate(ts: number): string {
   return new Date(ts * 1000).toLocaleString(undefined, {

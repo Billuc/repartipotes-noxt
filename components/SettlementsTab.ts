@@ -1,11 +1,5 @@
 import { html } from "htm/preact";
-
-interface Balance {
-  debtor: string;
-  amount: number;
-  currency: string;
-  creditor: string;
-}
+import type { Balance } from "../lib/types.ts";
 
 interface SettlementsTabProps {
   balances: Balance[];

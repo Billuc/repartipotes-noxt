@@ -2,42 +2,7 @@ import { html } from "htm/preact";
 import { useState, useEffect } from "preact/hooks";
 import { defineIsland } from "noxt";
 import CurrencySelect from "./CurrencySelect";
-
-interface SplitMethod {
-  method: "Evenly" | "Amounts";
-  details: string;
-}
-
-interface Expense {
-  id: number;
-  split_id: string;
-  name: string;
-  amount: number;
-  currency: string;
-  original_amount: number;
-  original_currency: string;
-  payed_by: string;
-  payed_for: string[];
-  expense_date: number;
-  split_method: SplitMethod;
-}
-
-interface SplitData {
-  id: string;
-  description: string;
-  participants: string[];
-  default_currency: string;
-  expenses: Expense[];
-  individualBalances: Record<string, number>;
-  balances: Balance[];
-}
-
-interface Balance {
-  debtor: string;
-  amount: number;
-  currency: string;
-  creditor: string;
-}
+import type { SplitData } from "../lib/types.ts";
 
 function timestampToDateTimeLocal(ts: number): string {
   const d = new Date(ts * 1000);
