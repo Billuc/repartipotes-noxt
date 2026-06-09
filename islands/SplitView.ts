@@ -4,6 +4,7 @@ import { defineIsland } from "noxt";
 import ExpensesTab from "../components/ExpensesTab";
 import SettlementsTab from "../components/SettlementsTab";
 import SettingsTab from "../components/SettingsTab";
+import { storeId } from "../lib/splits";
 
 interface SplitMethod {
   method: "Evenly" | "Amounts";
@@ -41,32 +42,18 @@ interface SplitData {
   balances: Balance[];
 }
 
-const SPLITS_KEY = "splits";
-const SEPARATOR = ",";
-
-function storeSplitId(id: string) {
-  try {
-    const raw = localStorage.getItem(SPLITS_KEY) ?? "";
-    const ids = new Set(raw.split(SEPARATOR).filter((s) => s.length > 0));
-    ids.add(id);
-    localStorage.setItem(SPLITS_KEY, Array.from(ids).join(SEPARATOR));
-  } catch {}
-}
-
 function SplitView() {
   const [splitId, setSplitId] = useState<string | null>(null);
   const [data, setData] = useState<SplitData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshCounter, setRefreshCounter] = useState(0);
-  const [showShare, setShowShare] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("split_id");
     if (id) {
       setSplitId(id);
-      storeSplitId(id);
+      storeId(id);
     } else {
       setError("No split ID provided");
       setLoading(false);
@@ -107,23 +94,11 @@ function SplitView() {
     setRefreshCounter((c) => c + 1);
   }, []);
 
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      alert("Failed to copy to clipboard");
-    }
-  };
-
-  const splitUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/split?split_id=${splitId}`
-      : "";
-
   if (loading) {
-    return html`<div class="vstack" style="align-items:center;padding:var(--space-8)">
+    return html`<div
+      class="vstack"
+      style="align-items:center;padding:var(--space-8)"
+    >
       <div aria-busy="true" data-spinner="large"></div>
       <p>Loading split...</p>
     </div>`;
@@ -138,59 +113,12 @@ function SplitView() {
   }
 
   return html`
-    <div class="hstack justify-between">
+    <div class="hstack justify-between mb-4">
       <h2>${data.description}</h2>
-      <button
-        type="button"
-        data-variant="secondary"
-        onClick=${() => setShowShare(!showShare)}
-      >
+      <a href="/share-split?split_id=${data.id}" data-variant="secondary">
         Share
-      </button>
+      </a>
     </div>
-
-    ${showShare
-      ? html`
-          <article class="card">
-            <header>
-              <h3>Share this split</h3>
-            </header>
-            <div class="vstack">
-              <p>
-                Share this link with friends:<br />
-                <a href=${splitUrl} target="_blank">${splitUrl}</a>
-                <button
-                  type="button"
-                  class="outline small"
-                  onClick=${() => copyToClipboard(splitUrl)}
-                >
-                  ${copied ? "Copied!" : "Copy link"}
-                </button>
-              </p>
-              <p>
-                Or use this code:<br />
-                <strong>${data.id}</strong>
-                <button
-                  type="button"
-                  class="outline small"
-                  onClick=${() => copyToClipboard(data.id)}
-                >
-                  ${copied ? "Copied!" : "Copy code"}
-                </button>
-              </p>
-            </div>
-            <footer>
-              <button
-                type="button"
-                class="ghost small"
-                onClick=${() => setShowShare(false)}
-              >
-                Close
-              </button>
-            </footer>
-          </article>
-        `
-      : null}
 
     <ot-tabs>
       <div role="tablist">
@@ -200,15 +128,17 @@ function SplitView() {
       </div>
       <div role="tabpanel">
         <${ExpensesTab}
-          split=${{ id: data.id, participants: data.participants, default_currency: data.default_currency }}
+          split=${{
+            id: data.id,
+            participants: data.participants,
+            default_currency: data.default_currency,
+          }}
           expenses=${data.expenses}
           onSaved=${loadData}
         />
       </div>
       <div role="tabpanel">
-        <${SettlementsTab}
-          balances=${data.balances}
-        />
+        <${SettlementsTab} balances=${data.balances} />
       </div>
       <div role="tabpanel">
         <${SettingsTab}

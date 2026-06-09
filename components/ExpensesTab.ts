@@ -78,11 +78,12 @@ export default function ExpensesTab({ split, expenses, onSaved }: ExpensesTabPro
                         </td>
                         <td>${formatDate(exp.expense_date)}</td>
                         <td>
-                          <${ExpenseForm}
-                            split=${split}
-                            expense=${exp}
-                            onSaved=${onSaved}
-                          />
+                          <a
+                            href="/edit-expense?split_id=${split.id}&expense_id=${exp.id}"
+                            class="ghost small"
+                          >
+                            Edit
+                          </a>
                         </td>
                       </tr>
                     `,
