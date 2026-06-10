@@ -207,6 +207,7 @@ tbody tr:hover {
   border: 2px solid var(--border);
   background-color: var(--secondary);
   padding: var(--space-1);
+  flex-wrap: wrap;
 }
 
 [role="tab"] {
