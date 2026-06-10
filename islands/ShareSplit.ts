@@ -26,7 +26,9 @@ function ShareSplit() {
   };
 
   if (!splitId) {
-    return html`<p>Aucun identifiant de groupe fourni.</p>`;
+    return html`
+      <p>Aucun identifiant de groupe fourni.</p>
+    `;
   }
 
   const splitUrl = `${window.location.origin}/split?split_id=${splitId}`;
@@ -40,13 +42,12 @@ function ShareSplit() {
       <h2>Partager le groupe</h2>
 
       <article class="card">
-        <header>
-          <h3>Partager ce groupe</h3>
-        </header>
         <div class="vstack">
           <p>
-            Partagez ce lien avec vos amis :<br />
+            Partagez ce lien avec vos amis :
+            <br />
             <a href=${splitUrl} target="_blank">${splitUrl}</a>
+            ${" "}
             <button
               type="button"
               class="outline small"
@@ -56,8 +57,10 @@ function ShareSplit() {
             </button>
           </p>
           <p>
-            Ou utilisez ce code :<br />
+            Ou utilisez ce code :
+            <br />
             <strong>${splitId}</strong>
+            ${" "}
             <button
               type="button"
               class="outline small"

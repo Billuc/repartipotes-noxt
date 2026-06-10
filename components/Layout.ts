@@ -47,9 +47,13 @@ export default function Layout({ title, children, styles }: LayoutProps) {
           </header>
           <main>${children}</main>
           <footer>
-            <p class="text-light">
-              <strong>Répartipotes</strong>
-              — partagez les dépenses entre amis
+            <p class="text-light text-sm text-center">
+              Développé par${" "}
+              <a href="https://billuc.github.io">Luc Billaud</a>
+              ${" "} avec${" "}
+              <a href="https://github.com/Billuc/noxt">Noxt</a>
+              ${" "} et${" "}
+              <a href="https://oat.ink/">Oat</a>
             </p>
           </footer>
         </div>

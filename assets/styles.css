@@ -259,6 +259,7 @@ summary {
 .flex-nowrap { flex-wrap: nowrap; }
 .text-nowrap { white-space: nowrap; }
 .mt-1 { margin-block-start: var(--space-1); }
+.text-center { text-align: center; }
 .p-8 { padding: var(--space-8); }
 .w-100px { width: 100px; }
 .border-left-primary {
