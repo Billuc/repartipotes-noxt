@@ -15,6 +15,12 @@ export default function Layout({ title, children, styles }: LayoutProps) {
         <title>${title}</title>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
         <link
           rel="stylesheet"
           href="https://unpkg.com/@knadh/oat/oat.min.css"
@@ -27,7 +33,7 @@ export default function Layout({ title, children, styles }: LayoutProps) {
       </head>
       <body>
         <div class="container">
-          <header class="site-header">
+          <header>
             <h1>
               <a href="/" class="unstyled" style="color:inherit"
                 >Répartipotes</a
@@ -38,7 +44,7 @@ export default function Layout({ title, children, styles }: LayoutProps) {
             </p>
           </header>
           <main>${children}</main>
-          <footer class="site-footer">
+          <footer>
             <p class="text-light">
               <strong>Répartipotes</strong> — split expenses with friends
             </p>
