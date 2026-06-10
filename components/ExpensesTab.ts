@@ -32,7 +32,7 @@ export default function ExpensesTab({ split, expenses }: ExpensesTabProps) {
             <div class="vstack gap-2">
               ${expenses.map(
                 (exp) => html`
-                  <article class="card p-4">
+                  <article class="card p-4 border-left-primary">
                     <div class="hstack justify-between flex-nowrap">
                       <strong class="font-display text-lg">
                         ${exp.name}

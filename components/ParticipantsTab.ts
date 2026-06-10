@@ -61,7 +61,7 @@ export default function SettingsTab({
       <div class="vstack gap-2 mb-6">
         ${participants.map(
           (p) => html`
-            <div class="hstack justify-between p-4 card">
+            <div class="hstack justify-between p-4 card border-left-primary">
               <span><strong>${p}</strong></span>
               ${individualBalances[p] != null
                 ? (() => {
