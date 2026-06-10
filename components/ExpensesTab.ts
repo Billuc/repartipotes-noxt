@@ -33,35 +33,21 @@ export default function ExpensesTab({ split, expenses }: ExpensesTabProps) {
               ${expenses.map(
                 (exp) => html`
                   <article class="card p-4">
-                    <div
-                      class="hstack justify-between"
-                      style="flex-wrap:nowrap"
-                    >
-                      <strong
-                        style="font-size:1.05rem;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:.03em"
-                      >
+                    <div class="hstack justify-between flex-nowrap">
+                      <strong class="font-display text-lg">
                         ${exp.name}
                       </strong>
-                      <span
-                        style="font-weight:700;font-size:1.1rem;white-space:nowrap"
-                      >
+                      <span class="font-bold text-xl text-nowrap">
                         ${exp.amount.toFixed(2)}${exp.currency}
                       </span>
                     </div>
-                    <div
-                      class="hstack"
-                      style="margin-top:var(--space-1);flex-wrap:nowrap;gap:var(--space-1)"
-                    >
-                      <span class="text-light" style="font-size:0.85rem">
-                        Paid by
-                      </span>
-                      <strong style="font-size:0.9rem">${exp.payed_by}</strong>
+                    <div class="hstack mt-1 flex-nowrap gap-1">
+                      <span class="text-light text-base">Paid by</span>
+                      <strong class="text-md">${exp.payed_by}</strong>
                       ${exp.payed_for.length > 0
                         ? html`
-                            <span class="text-light" style="font-size:0.85rem">
-                              for
-                            </span>
-                            <span style="font-size:0.85rem">
+                            <span class="text-light text-base">for</span>
+                            <span class="text-base">
                               ${(exp.payed_for.length > 3
                                 ? [...exp.payed_for.slice(0, 3), "..."]
                                 : exp.payed_for
@@ -70,20 +56,14 @@ export default function ExpensesTab({ split, expenses }: ExpensesTabProps) {
                           `
                         : null}
                     </div>
-                    <div
-                      class="hstack justify-between"
-                      style="margin-top:var(--space-2)"
-                    >
-                      <span class="text-light" style="font-size:0.8rem">
+                    <div class="hstack justify-between mt-2">
+                      <span class="text-light text-sm">
                         ${formatDate(exp.expense_date)}
                       </span>
-                      <div class="hstack" style="gap:var(--space-2)">
+                      <div class="hstack gap-2">
                         ${exp.original_currency !== exp.currency
                           ? html`
-                              <span
-                                class="text-light"
-                                style="font-size:0.75rem"
-                              >
+                              <span class="text-light text-xs">
                                 (${exp.original_amount.toFixed(
                                   2,
                                 )}${exp.original_currency})

@@ -235,8 +235,7 @@ function EditExpense() {
 
   if (loading) {
     return html`<div
-      class="vstack"
-      style="align-items:center;padding:var(--space-8)"
+      class="vstack items-center p-8"
     >
       <div aria-busy="true" data-spinner="large"></div>
       <p>Loading...</p>
@@ -252,7 +251,7 @@ function EditExpense() {
   }
 
   return html`
-    <div class="vstack" style="gap:var(--space-4)">
+    <div class="vstack gap-4">
       <a href="/split?split_id=${splitId}" data-variant="secondary">
         ${"<"} Return to split
       </a>
@@ -356,7 +355,7 @@ function EditExpense() {
                   min="0"
                   step="0.01"
                   disabled=${splitMethod === "Evenly" || !payedFor.includes(p)}
-                  style="width:100px"
+                  class="w-100px"
                 />
               </div>
             `,

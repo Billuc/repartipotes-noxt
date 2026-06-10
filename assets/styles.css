@@ -243,3 +243,25 @@ details {
 summary {
   border-radius: 6px;
 }
+
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.8rem; }
+.text-base { font-size: 0.85rem; }
+.text-md { font-size: 0.9rem; }
+.text-lg { font-size: 1.05rem; }
+.text-xl { font-size: 1.1rem; }
+.font-bold { font-weight: 700; }
+.font-display {
+  font-family: "Oswald", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.flex-nowrap { flex-wrap: nowrap; }
+.text-nowrap { white-space: nowrap; }
+.mt-1 { margin-block-start: var(--space-1); }
+.p-8 { padding: var(--space-8); }
+.w-100px { width: 100px; }
+.border-left-primary {
+  border-inline-start: 4px solid var(--primary);
+  padding-inline-start: calc(var(--space-4) - 2px);
+}

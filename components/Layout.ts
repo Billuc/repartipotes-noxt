@@ -28,16 +28,18 @@ export default function Layout({ title, children, styles }: LayoutProps) {
         <script src="https://unpkg.com/@knadh/oat/oat.min.js" defer></script>
         <link rel="stylesheet" href=${customStyles} />
         ${(styles ?? []).map(
-          (s) => html`<link rel="stylesheet" href="${s}" />`,
+          (s) => html`
+            <link rel="stylesheet" href="${s}" />
+          `,
         )}
       </head>
       <body>
         <div class="container">
           <header>
             <h1>
-              <a href="/" class="unstyled" style="color:inherit"
-                >Répartipotes</a
-              >
+              <a href="/" class="unstyled" style="color:inherit">
+                Répartipotes
+              </a>
             </h1>
             <p class="text-light">
               Split expenses with friends, simply and fairly.
@@ -46,7 +48,8 @@ export default function Layout({ title, children, styles }: LayoutProps) {
           <main>${children}</main>
           <footer>
             <p class="text-light">
-              <strong>Répartipotes</strong> — split expenses with friends
+              <strong>Répartipotes</strong>
+              — split expenses with friends
             </p>
           </footer>
         </div>
