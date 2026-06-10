@@ -20,11 +20,15 @@ export default function SettlementsTab({ balances }: SettlementsTabProps) {
                   <div class="card p-4 border-left-primary">
                     <span class="text-md">
                       <strong>${b.debtor}</strong>
+                      ${" "}
                       <span class="text-light text-base">owes</span>
+                      ${" "}
                       <span class="badge text-base" data-variant="danger">
                         ${b.amount.toFixed(2)}${b.currency}
                       </span>
+                      ${" "}
                       <span class="text-light text-base">to</span>
+                      ${" "}
                       <strong>${b.creditor}</strong>
                     </span>
                   </div>
