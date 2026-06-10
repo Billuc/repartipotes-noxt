@@ -260,121 +260,118 @@ function EditExpense() {
       <h2>${isEditing ? "Edit expense" : "New expense"}</h2>
 
       <form onSubmit=${handleSubmit}>
-        <div class="vstack">
-          ${formError
-            ? html`<div role="alert" data-variant="error">${formError}</div>`
-            : null}
+        ${formError
+          ? html`<div role="alert" data-variant="error">${formError}</div>`
+          : null}
 
-          <label data-field>
-            Name:
-            <input
-              type="text"
-              value=${name}
-              onInput=${(e: Event) =>
-                setName((e.target as HTMLInputElement).value)}
-              placeholder="Expense name"
-              required
-            />
-          </label>
+        <label data-field>
+          Name:
+          <input
+            type="text"
+            value=${name}
+            onInput=${(e: Event) =>
+              setName((e.target as HTMLInputElement).value)}
+            placeholder="Expense name"
+            required
+          />
+        </label>
 
-          <label data-field>
-            Amount:
-            <input
-              type="number"
-              value=${amount}
-              onInput=${(e: Event) =>
-                setAmount((e.target as HTMLInputElement).value)}
-              step="0.01"
-              min="0"
-              placeholder="0.00"
-              required
-            />
-          </label>
+        <label data-field>
+          Amount:
+          <input
+            type="number"
+            value=${amount}
+            onInput=${(e: Event) =>
+              setAmount((e.target as HTMLInputElement).value)}
+            step="0.01"
+            min="0"
+            placeholder="0.00"
+            required
+          />
+        </label>
 
-          <label data-field>
-            Currency:
-            <${CurrencySelect}
-              selected=${currency}
-              onChange=${(code: string) => setCurrency(code)}
-            />
-          </label>
+        <label data-field>
+          Currency:
+          <${CurrencySelect}
+            selected=${currency}
+            onChange=${(code: string) => setCurrency(code)}
+          />
+        </label>
 
-          <label data-field>
-            Paid by:
-            <select
-              value=${payedBy}
-              onChange=${(e: Event) =>
-                setPayedBy((e.target as HTMLSelectElement).value)}
-              required
-            >
-              <option value="">Select payer</option>
-              ${splitData.participants.map(
-                (p) => html`
-                  <option value=${p} selected=${p === payedBy}>${p}</option>
-                `,
-              )}
-            </select>
-          </label>
-
-          <label data-field>
-            Split method:
-            <select
-              value=${splitMethod}
-              onChange=${(e: Event) =>
-                setSplitMethod(
-                  (e.target as HTMLSelectElement).value as "Evenly" | "Amounts",
-                )}
-            >
-              <option value="Evenly">Evenly</option>
-              <option value="Amounts">By amount</option>
-            </select>
-          </label>
-
-          <fieldset>
-            <legend>Split between:</legend>
+        <label data-field>
+          Paid by:
+          <select
+            value=${payedBy}
+            onChange=${(e: Event) =>
+              setPayedBy((e.target as HTMLSelectElement).value)}
+            required
+          >
+            <option value="">Select payer</option>
             ${splitData.participants.map(
               (p) => html`
-                <div class="hstack">
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked=${payedFor.includes(p)}
-                      onChange=${() => toggleParticipant(p)}
-                    />
-                    ${p}
-                  </label>
-                  <input
-                    type="number"
-                    value=${getAmountFor(p)}
-                    onInput=${(e: Event) => {
-                      if (splitMethod === "Amounts") {
-                        updateAmountValue(
-                          p,
-                          (e.target as HTMLInputElement).value,
-                        );
-                      }
-                    }}
-                    min="0"
-                    step="0.01"
-                    disabled=${splitMethod === "Evenly" ||
-                    !payedFor.includes(p)}
-                    style="width:100px"
-                  />
-                </div>
+                <option value=${p} selected=${p === payedBy}>${p}</option>
               `,
             )}
-          </fieldset>
+          </select>
+        </label>
 
-          <label data-field>
-            Date:
-            <input
-              type="datetime-local"
-              value=${dateTime}
-              onChange=${(e: Event) =>
-                setDateTime((e.target as HTMLInputElement).value)}
-            />
-          </label>
-        </div>
+        <label data-field>
+          Split method:
+          <select
+            value=${splitMethod}
+            onChange=${(e: Event) =>
+              setSplitMethod(
+                (e.target as HTMLSelectElement).value as "Evenly" | "Amounts",
+              )}
+          >
+            <option value="Evenly">Evenly</option>
+            <option value="Amounts">By amount</option>
+          </select>
+        </label>
+
+        <fieldset>
+          <legend>Split between:</legend>
+          ${splitData.participants.map(
+            (p) => html`
+              <div class="hstack">
+                <label>
+                  <input
+                    type="checkbox"
+                    checked=${payedFor.includes(p)}
+                    onChange=${() => toggleParticipant(p)}
+                  />
+                  ${p}
+                </label>
+                <input
+                  type="number"
+                  value=${getAmountFor(p)}
+                  onInput=${(e: Event) => {
+                    if (splitMethod === "Amounts") {
+                      updateAmountValue(
+                        p,
+                        (e.target as HTMLInputElement).value,
+                      );
+                    }
+                  }}
+                  min="0"
+                  step="0.01"
+                  disabled=${splitMethod === "Evenly" || !payedFor.includes(p)}
+                  style="width:100px"
+                />
+              </div>
+            `,
+          )}
+        </fieldset>
+
+        <label data-field>
+          Date:
+          <input
+            type="datetime-local"
+            value=${dateTime}
+            onChange=${(e: Event) =>
+              setDateTime((e.target as HTMLInputElement).value)}
+          />
+        </label>
 
         <div class="hstack justify-end gap-2 mt-4">
           <button type="submit" disabled=${submitting}>

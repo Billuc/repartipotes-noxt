@@ -86,24 +86,26 @@ export default function SettingsTab({
         )}
       </div>
 
-      <form onSubmit=${handleAddParticipant}>
-        ${participantError
-          ? html`<div role="alert" data-variant="error">
-              ${participantError}
-            </div>`
-          : null}
-        <fieldset class="group">
-          <input
-            type="text"
-            value=${newParticipant}
-            onInput=${(e: Event) =>
-              setNewParticipant((e.target as HTMLInputElement).value)}
-            placeholder="New participant name"
-            required
-          />
-          <button type="submit">Add</button>
-        </fieldset>
-      </form>
+      <article class="card">
+        <form onSubmit=${handleAddParticipant}>
+          ${participantError
+            ? html`<div role="alert" data-variant="error">
+                ${participantError}
+              </div>`
+            : null}
+          <fieldset class="group">
+            <input
+              type="text"
+              value=${newParticipant}
+              onInput=${(e: Event) =>
+                setNewParticipant((e.target as HTMLInputElement).value)}
+              placeholder="New participant name"
+              required
+            />
+            <button type="submit">Add</button>
+          </fieldset>
+        </form>
+      </article>
     </div>
   `;
 }

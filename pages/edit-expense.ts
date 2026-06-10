@@ -9,7 +9,9 @@ export default function EditExpensePage() {
   return html`
     <${Layout} title="Edit expense — Répartipotes">
       <section>
-        <${EditExpenseIsland} />
+        <article class="card">
+          <${EditExpenseIsland} />
+        </article>
       </section>
     </${Layout}>
   `;
