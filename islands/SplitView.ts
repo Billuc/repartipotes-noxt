@@ -20,7 +20,7 @@ function SplitView() {
       setSplitId(id);
       storeId(id);
     } else {
-      setError("No split ID provided");
+      setError("Aucun identifiant de groupe fourni");
       setLoading(false);
     }
   }, []);
@@ -36,13 +36,13 @@ function SplitView() {
       try {
         const res = await fetch(`/api/splits/${splitId}`);
         if (!res.ok) {
-          throw new Error(`Failed to load split (${res.status})`);
+          throw new Error(`Échec du chargement du groupe (${res.status})`);
         }
         const json = (await res.json()) as SplitData;
         if (!cancelled) setData(json);
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Failed to load split");
+          setError(err instanceof Error ? err.message : "Échec du chargement du groupe");
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -62,7 +62,7 @@ function SplitView() {
   if (loading) {
     return html`<div class="vstack items-center p-4">
       <div aria-busy="true" data-spinner="large"></div>
-      <p>Loading split...</p>
+      <p>Chargement du groupe...</p>
     </div>`;
   }
 
@@ -71,21 +71,21 @@ function SplitView() {
   }
 
   if (!data) {
-    return html`<p>No split data found.</p>`;
+    return html`<p>Aucune donnée de groupe trouvée.</p>`;
   }
 
   return html`
     <div class="hstack justify-between mb-4">
       <h2>${data.description}</h2>
       <a href="/share-split?split_id=${data.id}" data-variant="secondary">
-        Share
+        Partager
       </a>
     </div>
 
     <ot-tabs>
       <div role="tablist">
-        <button role="tab">Expenses</button>
-        <button role="tab">Settlements</button>
+        <button role="tab">Dépenses</button>
+        <button role="tab">Remboursements</button>
         <button role="tab">Participants</button>
       </div>
       <div role="tabpanel">

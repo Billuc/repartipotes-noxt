@@ -29,12 +29,12 @@ export function createExpenseHandlers(db: IDatabase) {
     } = body as any;
 
     if (!split_id || !name || amount == null || !currency || !payed_by || !payed_for || !split_method) {
-      throw new BadRequestError("Missing required fields");
+      throw new BadRequestError("Champs obligatoires manquants");
     }
 
     const split = splitRepo.getSplit(split_id);
     if (!split) {
-      throw new NotFoundError("Split not found");
+      throw new NotFoundError("Groupe introuvable");
     }
 
     let defaultCurrencyAmount: number;
@@ -50,7 +50,7 @@ export function createExpenseHandlers(db: IDatabase) {
         split.default_currency,
       );
     } catch (err) {
-      throw new BadRequestError(err instanceof Error ? err.message : "Invalid expense data");
+      throw new BadRequestError(err instanceof Error ? err.message : "Données de dépense invalides");
     }
 
     const input: CreateExpenseInput = {
@@ -77,12 +77,12 @@ export function createExpenseHandlers(db: IDatabase) {
     } = body as any;
 
     if (!split_id) {
-      throw new BadRequestError("Missing required field: split_id");
+      throw new BadRequestError("Champ obligatoire manquant : identifiant du groupe");
     }
 
     const split = splitRepo.getSplit(split_id);
     if (!split) {
-      throw new NotFoundError("Split not found");
+      throw new NotFoundError("Groupe introuvable");
     }
 
     let defaultCurrencyAmount: number;
@@ -98,7 +98,7 @@ export function createExpenseHandlers(db: IDatabase) {
         split.default_currency,
       );
     } catch (err) {
-      throw new BadRequestError(err instanceof Error ? err.message : "Invalid expense data");
+      throw new BadRequestError(err instanceof Error ? err.message : "Données de dépense invalides");
     }
 
     const input: UpdateExpenseInput = {
@@ -122,7 +122,7 @@ export function createExpenseHandlers(db: IDatabase) {
   function handleDeleteExpense(id: number, body: Record<string, unknown>): Response {
     const { split_id } = body as any;
     if (!split_id) {
-      throw new BadRequestError("Missing required field: split_id");
+      throw new BadRequestError("Champ obligatoire manquant : identifiant du groupe");
     }
 
     expenseRepo.deleteExpense(id, split_id);

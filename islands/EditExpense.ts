@@ -44,7 +44,7 @@ function EditExpense() {
       setSplitId(sId);
       if (eId) setExpenseId(Number(eId));
     } else {
-      setError("Missing split_id");
+      setError("Identifiant de groupe manquant");
       setLoading(false);
     }
   }, []);
@@ -60,7 +60,7 @@ function EditExpense() {
       try {
         const res = await fetch(`/api/splits/${splitId}`);
         if (!res.ok) {
-          throw new Error(`Failed to load split (${res.status})`);
+          throw new Error(`Échec du chargement du groupe (${res.status})`);
         }
         const json = (await res.json()) as SplitData;
         if (!cancelled) {
@@ -88,13 +88,13 @@ function EditExpense() {
               }
               setDateTime(timestampToDateTimeLocal(found.expense_date));
             } else {
-              setError("Expense not found");
+              setError("Dépense introuvable");
             }
           }
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Failed to load data");
+          setError(err instanceof Error ? err.message : "Échec du chargement des données");
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -130,7 +130,7 @@ function EditExpense() {
         0,
       );
       if (Math.abs(total - totalAmount) > 0.01) {
-        return `The sum of individual amounts (${total.toFixed(2)}) must equal the total amount (${totalAmount.toFixed(2)})`;
+        return `La somme des montants individuels (${total.toFixed(2)}) doit être égale au montant total (${totalAmount.toFixed(2)})`;
       }
     }
     return null;
@@ -145,7 +145,7 @@ function EditExpense() {
     }
 
     if (!name.trim() || !amount || !payedBy || payedFor.length === 0) {
-      setFormError("Please fill in all required fields.");
+      setFormError("Veuillez remplir tous les champs obligatoires.");
       return;
     }
 
@@ -185,7 +185,7 @@ function EditExpense() {
           string,
           unknown
         >;
-        throw new Error((errData.error as string) ?? "Failed to save expense");
+        throw new Error((errData.error as string) ?? "Échec de l'enregistrement de la dépense");
       }
 
       window.location.href = `/split?split_id=${splitId}`;
@@ -198,7 +198,7 @@ function EditExpense() {
 
   const handleDelete = async () => {
     if (!expenseId) return;
-    if (!confirm("Are you sure you want to delete this expense?")) return;
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cette dépense ?")) return;
 
     setSubmitting(true);
     try {
@@ -214,7 +214,7 @@ function EditExpense() {
           unknown
         >;
         throw new Error(
-          (errData.error as string) ?? "Failed to delete expense",
+          (errData.error as string) ?? "Échec de la suppression de la dépense",
         );
       }
 
@@ -238,7 +238,7 @@ function EditExpense() {
       class="vstack items-center p-8"
     >
       <div aria-busy="true" data-spinner="large"></div>
-      <p>Loading...</p>
+      <p>Chargement...</p>
     </div>`;
   }
 
@@ -247,16 +247,16 @@ function EditExpense() {
   }
 
   if (!splitData) {
-    return html`<p>No split data found.</p>`;
+    return html`<p>Aucune donnée de groupe trouvée.</p>`;
   }
 
   return html`
     <div class="vstack gap-4">
       <a href="/split?split_id=${splitId}" data-variant="secondary">
-        ${"<"} Return to split
+        ${"<"} Retour au groupe
       </a>
 
-      <h2>${isEditing ? "Edit expense" : "New expense"}</h2>
+      <h2>${isEditing ? "Modifier la dépense" : "Nouvelle dépense"}</h2>
 
       <form onSubmit=${handleSubmit}>
         ${formError
@@ -264,19 +264,19 @@ function EditExpense() {
           : null}
 
         <label data-field>
-          Name:
+          Nom :
           <input
             type="text"
             value=${name}
             onInput=${(e: Event) =>
               setName((e.target as HTMLInputElement).value)}
-            placeholder="Expense name"
+            placeholder="Nom de la dépense"
             required
           />
         </label>
 
         <label data-field>
-          Amount:
+          Montant :
           <input
             type="number"
             value=${amount}
@@ -290,7 +290,7 @@ function EditExpense() {
         </label>
 
         <label data-field>
-          Currency:
+          Devise :
           <${CurrencySelect}
             selected=${currency}
             onChange=${(code: string) => setCurrency(code)}
@@ -298,14 +298,14 @@ function EditExpense() {
         </label>
 
         <label data-field>
-          Paid by:
+          Payé par :
           <select
             value=${payedBy}
             onChange=${(e: Event) =>
               setPayedBy((e.target as HTMLSelectElement).value)}
             required
           >
-            <option value="">Select payer</option>
+            <option value="">Sélectionner le payeur</option>
             ${splitData.participants.map(
               (p) => html`
                 <option value=${p} selected=${p === payedBy}>${p}</option>
@@ -315,7 +315,7 @@ function EditExpense() {
         </label>
 
         <label data-field>
-          Split method:
+          Méthode de répartition :
           <select
             value=${splitMethod}
             onChange=${(e: Event) =>
@@ -323,13 +323,13 @@ function EditExpense() {
                 (e.target as HTMLSelectElement).value as "Evenly" | "Amounts",
               )}
           >
-            <option value="Evenly">Evenly</option>
-            <option value="Amounts">By amount</option>
+            <option value="Evenly">Équitablement</option>
+            <option value="Amounts">Par montant</option>
           </select>
         </label>
 
         <fieldset>
-          <legend>Split between:</legend>
+          <legend>Répartir entre :</legend>
           ${splitData.participants.map(
             (p) => html`
               <div class="hstack">
@@ -363,7 +363,7 @@ function EditExpense() {
         </fieldset>
 
         <label data-field>
-          Date:
+          Date :
           <input
             type="datetime-local"
             value=${dateTime}
@@ -374,7 +374,7 @@ function EditExpense() {
 
         <div class="hstack justify-end gap-2 mt-4">
           <button type="submit" disabled=${submitting}>
-            ${submitting ? "Saving..." : isEditing ? "Save" : "Add expense"}
+            ${submitting ? "Enregistrement..." : isEditing ? "Enregistrer" : "Ajouter une dépense"}
           </button>
           ${isEditing
             ? html`
@@ -384,7 +384,7 @@ function EditExpense() {
                   onClick=${handleDelete}
                   disabled=${submitting}
                 >
-                  Delete
+                  Supprimer
                 </button>
               `
             : null}
@@ -393,7 +393,7 @@ function EditExpense() {
             class="outline"
             data-variant="secondary"
           >
-            Cancel
+            Annuler
           </a>
         </div>
       </form>

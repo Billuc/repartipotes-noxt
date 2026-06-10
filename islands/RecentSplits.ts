@@ -50,7 +50,7 @@ function RecentSplits() {
     ${recentSplits.length > 0
       ? html`
           <section>
-            <h4>Recent splits</h4>
+            <h4>Groupes récents</h4>
             <div class="vstack gap-2">
               ${recentSplits.map(
                 (s) => html`
@@ -61,7 +61,7 @@ function RecentSplits() {
                       class="small"
                       data-variant="danger"
                       onClick=${(e: Event) => handleRemove(e, s.id)}
-                      title="Remove"
+                      title="Supprimer"
                     >
                       ×
                     </button>
@@ -74,12 +74,12 @@ function RecentSplits() {
       : null}
     ${loading
       ? html`<div aria-busy="true" data-spinner="small">
-          Loading recent splits...
+          Chargement des groupes récents...
         </div>`
       : null}
     ${!loading && recentSplits.length === 0
       ? html`<p class="text-light">
-          No recent splits. Create or join one above!
+          Aucun groupe récent. Créez ou rejoignez-en un ci-dessus !
         </p>`
       : null}
   `;

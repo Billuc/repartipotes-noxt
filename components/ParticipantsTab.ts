@@ -38,7 +38,7 @@ export default function SettingsTab({
           unknown
         >;
         throw new Error(
-          (errData.error as string) ?? "Failed to add participant",
+          (errData.error as string) ?? "Échec de l'ajout du participant",
         );
       }
 
@@ -47,7 +47,7 @@ export default function SettingsTab({
       onSaved();
     } catch (err) {
       setParticipantError(
-        err instanceof Error ? err.message : "Failed to add participant",
+        err instanceof Error ? err.message : "Échec de l'ajout du participant",
       );
     }
   };
@@ -99,10 +99,10 @@ export default function SettingsTab({
               value=${newParticipant}
               onInput=${(e: Event) =>
                 setNewParticipant((e.target as HTMLInputElement).value)}
-              placeholder="New participant name"
+              placeholder="Nom du nouveau participant"
               required
             />
-            <button type="submit">Add</button>
+            <button type="submit">Ajouter</button>
           </fieldset>
         </form>
       </article>

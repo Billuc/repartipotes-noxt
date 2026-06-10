@@ -21,12 +21,12 @@ function ShareSplit() {
       setter(true);
       setTimeout(() => setter(false), 2000);
     } catch {
-      alert("Failed to copy to clipboard");
+      alert("Échec de la copie dans le presse-papiers");
     }
   };
 
   if (!splitId) {
-    return html`<p>No split ID provided.</p>`;
+    return html`<p>Aucun identifiant de groupe fourni.</p>`;
   }
 
   const splitUrl = `${window.location.origin}/split?split_id=${splitId}`;
@@ -34,36 +34,36 @@ function ShareSplit() {
   return html`
     <div class="vstack gap-4">
       <a href="/split?split_id=${splitId}" data-variant="secondary">
-        ${"<"} Return to split
+        ${"<"} Retour au groupe
       </a>
 
-      <h2>Share split</h2>
+      <h2>Partager le groupe</h2>
 
       <article class="card">
         <header>
-          <h3>Share this split</h3>
+          <h3>Partager ce groupe</h3>
         </header>
         <div class="vstack">
           <p>
-            Share this link with friends:<br />
+            Partagez ce lien avec vos amis :<br />
             <a href=${splitUrl} target="_blank">${splitUrl}</a>
             <button
               type="button"
               class="outline small"
               onClick=${() => copyToClipboard(splitUrl, setCopiedLink)}
             >
-              ${copiedLink ? "Copied!" : "Copy link"}
+              ${copiedLink ? "Copié !" : "Copier le lien"}
             </button>
           </p>
           <p>
-            Or use this code:<br />
+            Ou utilisez ce code :<br />
             <strong>${splitId}</strong>
             <button
               type="button"
               class="outline small"
               onClick=${() => copyToClipboard(splitId, setCopiedCode)}
             >
-              ${copiedCode ? "Copied!" : "Copy code"}
+              ${copiedCode ? "Copié !" : "Copier le code"}
             </button>
           </p>
         </div>

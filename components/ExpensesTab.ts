@@ -18,15 +18,15 @@ export default function ExpensesTab({ split, expenses }: ExpensesTabProps) {
   return html`
     <div id="expenses">
       <div class="hstack justify-between mb-4">
-        <h3>Expenses</h3>
+        <h3>Dépenses</h3>
         <a href="/edit-expense?split_id=${split.id}" class="button small">
-          + Add expense
+          + Ajouter une dépense
         </a>
       </div>
 
       ${expenses.length === 0
         ? html`
-            <p class="text-light">No expenses yet. Add one above!</p>
+            <p class="text-light">Aucune dépense pour l'instant. Ajoutez-en une ci-dessus !</p>
           `
         : html`
             <div class="vstack gap-2">
@@ -42,11 +42,11 @@ export default function ExpensesTab({ split, expenses }: ExpensesTabProps) {
                       </span>
                     </div>
                     <div class="hstack mt-1 flex-nowrap gap-1">
-                      <span class="text-light text-base">Paid by</span>
+                      <span class="text-light text-base">Payé par</span>
                       <strong class="text-md">${exp.payed_by}</strong>
                       ${exp.payed_for.length > 0
                         ? html`
-                            <span class="text-light text-base">for</span>
+                            <span class="text-light text-base">pour</span>
                             <span class="text-base">
                               ${(exp.payed_for.length > 3
                                 ? [...exp.payed_for.slice(0, 3), "..."]
@@ -74,7 +74,7 @@ export default function ExpensesTab({ split, expenses }: ExpensesTabProps) {
                           href="/edit-expense?split_id=${split.id}&expense_id=${exp.id}"
                           class="ghost small"
                         >
-                          Edit
+                          Modifier
                         </a>
                       </div>
                     </div>

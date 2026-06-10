@@ -7,11 +7,11 @@ const JoinSplitIsland = await prepareIsland(JoinSplit);
 
 export default function JoinSplitPage() {
   return html`
-    <${Layout} title="Join split — Répartipotes">
+    <${Layout} title="Rejoindre un groupe — Répartipotes">
       <section>
-        <h2>Join an existing split</h2>
+        <h2>Rejoindre un groupe existant</h2>
         <p class="text-light mb-6">
-          Enter a split code to view and manage shared expenses with your group.
+          Entrez un code de groupe pour voir et gérer les dépenses communes.
         </p>
         <article class="card">
           <${JoinSplitIsland} />

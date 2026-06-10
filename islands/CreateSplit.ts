@@ -31,7 +31,7 @@ function CreateSplit() {
       .filter((p) => p.length > 0);
 
     if (!description.trim() || validParticipants.length === 0) {
-      setError("Please fill in description and at least one participant.");
+      setError("Veuillez remplir la description et ajouter au moins un participant.");
       return;
     }
 
@@ -51,13 +51,13 @@ function CreateSplit() {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        throw new Error((errData as any).error ?? "Failed to create split");
+        throw new Error((errData as any).error ?? "Échec de la création du groupe");
       }
 
       const data = (await res.json()) as { id: string };
       window.location.href = `/split?split_id=${data.id}`;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : "Une erreur est survenue");
       setSubmitting(false);
     }
   };
@@ -67,19 +67,19 @@ function CreateSplit() {
       ${error ? html`<div role="alert" data-variant="error">${error}</div>` : null}
 
       <label data-field>
-        Description:
+        Description :
         <input
           type="text"
           value=${description}
           onInput=${(e: Event) =>
             setDescription((e.target as HTMLInputElement).value)}
-          placeholder="Trip to Paris"
+          placeholder="Voyage à Paris"
           required
         />
       </label>
 
       <div data-field>
-        <label>Participants:</label>
+        <label>Participants :</label>
         ${participants.map(
           (p, i) => html`
             <fieldset class="group">
@@ -88,7 +88,7 @@ function CreateSplit() {
                 value=${p}
                 onInput=${(e: Event) =>
                   updateParticipant(i, (e.target as HTMLInputElement).value)}
-                placeholder="Name"
+                placeholder="Nom"
                 required
               />
               ${participants.length > 1
@@ -97,7 +97,7 @@ function CreateSplit() {
                       type="button"
                       class="ghost"
                       onClick=${() => removeParticipant(i)}
-                      title="Remove"
+                      title="Supprimer"
                     >
                       ×
                     </button>
@@ -111,12 +111,12 @@ function CreateSplit() {
           class="outline"
           onClick=${addParticipant}
         >
-          + Add participant
+          + Ajouter un participant
         </button>
       </div>
 
       <label data-field>
-        Default currency:
+        Devise par défaut :
         <${CurrencySelect}
           selected=${defaultCurrency}
           onChange=${(code: string) => setDefaultCurrency(code)}
@@ -124,7 +124,7 @@ function CreateSplit() {
       </label>
 
       <button type="submit" disabled=${submitting}>
-        ${submitting ? "Creating..." : "Create split"}
+        ${submitting ? "Création..." : "Créer le groupe"}
       </button>
     </form>
   `;

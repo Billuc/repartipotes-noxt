@@ -23,7 +23,7 @@ export function wrapApi(handlers: Record<string, (req: Request) => Response | Pr
   return async (req: Request): Promise<Response> => {
     const handler = handlers[req.method];
     if (!handler) {
-      return jsonResponse({ error: "Method Not Allowed" }, 405);
+      return jsonResponse({ error: "Méthode non autorisée" }, 405);
     }
     try {
       return await handler(req);
@@ -34,7 +34,7 @@ export function wrapApi(handlers: Record<string, (req: Request) => Response | Pr
       if (err instanceof BadRequestError) {
         return jsonResponse({ error: err.message }, 400);
       }
-      const message = err instanceof Error ? err.message : "Internal Server Error";
+      const message = err instanceof Error ? err.message : "Erreur interne du serveur";
       return jsonResponse({ error: message }, 500);
     }
   };

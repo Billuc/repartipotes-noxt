@@ -42,14 +42,14 @@ export default function Layout({ title, children, styles }: LayoutProps) {
               </a>
             </h1>
             <p class="text-light">
-              Split expenses with friends, simply and fairly.
+              Partagez les dépenses entre amis, simplement et équitablement.
             </p>
           </header>
           <main>${children}</main>
           <footer>
             <p class="text-light">
               <strong>Répartipotes</strong>
-              — split expenses with friends
+              — partagez les dépenses entre amis
             </p>
           </footer>
         </div>

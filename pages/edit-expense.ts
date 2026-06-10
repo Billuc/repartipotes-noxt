@@ -7,7 +7,7 @@ const EditExpenseIsland = await prepareIsland(EditExpense);
 
 export default function EditExpensePage() {
   return html`
-    <${Layout} title="Edit expense — Répartipotes">
+    <${Layout} title="Modifier une dépense — Répartipotes">
       <section>
         <article class="card">
           <${EditExpenseIsland} />

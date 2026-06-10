@@ -17,17 +17,17 @@ function JoinSplit() {
   return html`
     <form onSubmit=${handleJoin}>
       <label data-field>
-        Split code:
+        Code du groupe :
         <input
           type="text"
           value=${code}
           onInput=${(e: Event) =>
             setCode((e.target as HTMLInputElement).value)}
-          placeholder="Enter split code"
+          placeholder="Entrez le code du groupe"
           required
         />
       </label>
-      <button type="submit">Join split</button>
+      <button type="submit">Rejoindre le groupe</button>
     </form>
   `;
 }

@@ -23,7 +23,7 @@ export function createSplitHandlers(db: IDatabase) {
     const { description, participants, default_currency } = body as any;
 
     if (!description || !participants || !default_currency) {
-      throw new BadRequestError("Missing required fields: description, participants, default_currency");
+      throw new BadRequestError("Champs obligatoires manquants : description, participants, devise par défaut");
     }
 
     const input: CreateSplitInput = {
@@ -40,7 +40,7 @@ export function createSplitHandlers(db: IDatabase) {
   function handleGetSplit(id: string): Response {
     const split = splitRepo.getSplit(id);
     if (!split) {
-      throw new NotFoundError("Split not found");
+      throw new NotFoundError("Groupe introuvable");
     }
 
     const expenses = expenseRepo.getExpenses(id);
@@ -57,7 +57,7 @@ export function createSplitHandlers(db: IDatabase) {
   function handleUpdateSplit(id: string, body: Record<string, unknown>): Response {
     const existing = splitRepo.getSplit(id);
     if (!existing) {
-      throw new NotFoundError("Split not found");
+      throw new NotFoundError("Groupe introuvable");
     }
 
     const input: UpdateSplitInput = { id };

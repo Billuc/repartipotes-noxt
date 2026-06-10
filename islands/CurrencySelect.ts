@@ -24,7 +24,7 @@ function CurrencySelect({
 
   if (loading) {
     return html`<select name=${name ?? ""} required>
-      <option>Loading...</option>
+      <option>Chargement...</option>
     </select>`;
   }
 
