@@ -1,6 +1,5 @@
 import { html } from "htm/preact";
 import type { ComponentChildren } from "preact";
-import customStyles from "../assets/styles.css" with { type: "file" };
 
 interface LayoutProps {
   title: string;
@@ -26,7 +25,7 @@ export default function Layout({ title, children, styles }: LayoutProps) {
           href="https://unpkg.com/@knadh/oat/oat.min.css"
         />
         <script src="https://unpkg.com/@knadh/oat/oat.min.js" defer></script>
-        <link rel="stylesheet" href=${customStyles} />
+        <link rel="stylesheet" href="../assets/styles.css" />
         ${(styles ?? []).map(
           (s) => html`
             <link rel="stylesheet" href="${s}" />

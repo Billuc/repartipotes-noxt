@@ -26,7 +26,7 @@
 
     "htm": ["htm@3.1.1", "", {}, "sha512-983Vyg8NwUE7JkZ6NmOqpCZ+sh1bKv2iYTlUkzlWmA5JD2acKoxd4KVxbMmxX/85mtfdnDmTFoNKcg5DGAvxNQ=="],
 
-    "noxt": ["noxt@github:Billuc/noxt#925a4f8", { "dependencies": { "devalue": "^5.8.1", "htm": "^3.1.1", "preact": "^10.29.2", "preact-render-to-string": "^6.7.0" }, "peerDependencies": { "typescript": "^5.9.3" } }, "Billuc-noxt-925a4f8", "sha512-Pm814Y+kHpJEnMUJocinlzeGYqZj4tupjrZeJFk1UPyHFEwa8B47V5kuWBRyGbQNNFPSSA28Sv0Cpki1wDWSSw=="],
+    "noxt": ["noxt@github:Billuc/noxt#e0325f6", { "dependencies": { "devalue": "^5.8.1", "htm": "^3.1.1", "preact": "^10.29.2", "preact-render-to-string": "^6.7.0" }, "peerDependencies": { "typescript": "^5.9.3" } }, "Billuc-noxt-e0325f6", "sha512-GFPyLbpCe/5hNOz3Gukg7VuMu3Quxk9H5z+LjkAZw0kGg/O2yFCay3ZfDLG0D4dH0pgFqS84F+Jf03j1AIjHzw=="],
 
     "preact": ["preact@10.29.2", "", {}, "sha512-7tNmwg/7mzzAoB/8kSg6Hl37JraAZw3Z3A0JSY7VXlZwo82Xn0G7wKbNNs2qoF4ZEEsQGTwDAroNdqKs1ofJxQ=="],
 
