@@ -13,7 +13,7 @@ const { handleCreateSplit, handleGetSplit, handleUpdateSplit } = createSplitHand
 const { handleCreateExpense, handleUpdateExpense, handleDeleteExpense } = createExpenseHandlers(db);
 const { handleListCurrencies } = createCurrencyHandlers();
 
-const PORT = process.env.PORT ?? "2101";
+const PORT = Bun.env.PORT ?? "2101";
 // @ts-ignore - prepareRoutes is a Bun macro, its return type is resolved at build time
 const noxtRoutes = (await import(prepareRoutes())).default;
 
