@@ -1,6 +1,7 @@
 import { html } from "htm/preact";
 import { useState, useEffect } from "preact/hooks";
 import { defineIsland } from "noxt";
+import { fetchJson } from "noxt/runtime";
 import { getStoredIds, removeStoredId } from "../lib/splits";
 
 interface SplitInfo {
@@ -20,9 +21,8 @@ function RecentSplits() {
 
     const splitDataPromises = ids.map(async (id) => {
       try {
-        const res = await fetch(`/api/splits/${id}`);
-        if (!res.ok) return null;
-        const data = (await res.json()) as SplitInfo;
+        const { data, error } = await fetchJson<SplitInfo>(`/api/splits/${id}`);
+        if (error) return null;
         return data;
       } catch {
         return null;

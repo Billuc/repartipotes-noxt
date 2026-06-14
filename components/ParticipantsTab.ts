@@ -1,5 +1,6 @@
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
+import { fetchJson } from "noxt/runtime";
 
 interface SettingsTabProps {
   participants: string[];
@@ -26,20 +27,13 @@ export default function SettingsTab({
     const updated = [...participants, newParticipant.trim()];
 
     try {
-      const res = await fetch(`/api/splits/${splitId}`, {
+      const { error } = await fetchJson(`/api/splits/${splitId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ participants: updated }),
+        body: { participants: updated },
       });
 
-      if (!res.ok) {
-        const errData = (await res.json().catch(() => ({}))) as Record<
-          string,
-          unknown
-        >;
-        throw new Error(
-          (errData.error as string) ?? "Échec de l'ajout du participant",
-        );
+      if (error) {
+        throw error;
       }
 
       setNewParticipant("");

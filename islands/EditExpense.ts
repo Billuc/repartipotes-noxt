@@ -1,6 +1,7 @@
 import { html } from "htm/preact";
 import { useState, useEffect } from "preact/hooks";
 import { defineIsland } from "noxt";
+import { fetchJson } from "noxt/runtime";
 import CurrencySelect from "./CurrencySelect";
 import type { SplitData } from "../lib/types.ts";
 
@@ -58,11 +59,11 @@ function EditExpense() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/splits/${splitId}`);
-        if (!res.ok) {
-          throw new Error(`Échec du chargement du groupe (${res.status})`);
+        const { data, error } = await fetchJson<SplitData>(`/api/splits/${splitId}`);
+        if (error) {
+          throw error;
         }
-        const json = (await res.json()) as SplitData;
+        const json = data!;
         if (!cancelled) {
           setSplitData(json);
           setCurrency(json.default_currency);
@@ -174,18 +175,13 @@ function EditExpense() {
       const url = isEditing ? `/api/expenses/${expenseId}` : "/api/expenses";
       const method = isEditing ? "PUT" : "POST";
 
-      const res = await fetch(url, {
+      const { error } = await fetchJson(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body,
       });
 
-      if (!res.ok) {
-        const errData = (await res.json().catch(() => ({}))) as Record<
-          string,
-          unknown
-        >;
-        throw new Error((errData.error as string) ?? "Échec de l'enregistrement de la dépense");
+      if (error) {
+        throw error;
       }
 
       window.location.href = `/split?split_id=${splitId}`;
@@ -202,20 +198,13 @@ function EditExpense() {
 
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/expenses/${expenseId}`, {
+      const { error } = await fetchJson(`/api/expenses/${expenseId}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ split_id: splitId }),
+        body: { split_id: splitId },
       });
 
-      if (!res.ok) {
-        const errData = (await res.json().catch(() => ({}))) as Record<
-          string,
-          unknown
-        >;
-        throw new Error(
-          (errData.error as string) ?? "Échec de la suppression de la dépense",
-        );
+      if (error) {
+        throw error;
       }
 
       window.location.href = `/split?split_id=${splitId}`;

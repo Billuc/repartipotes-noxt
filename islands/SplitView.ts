@@ -1,6 +1,7 @@
 import { html } from "htm/preact";
 import { useState, useEffect, useCallback } from "preact/hooks";
 import { defineIsland } from "noxt";
+import { fetchJson } from "noxt/runtime";
 import ExpensesTab from "../components/ExpensesTab";
 import SettlementsTab from "../components/SettlementsTab";
 import ParticipantsTab from "../components/ParticipantsTab.ts";
@@ -34,12 +35,11 @@ function SplitView() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`/api/splits/${splitId}`);
-        if (!res.ok) {
-          throw new Error(`Échec du chargement du groupe (${res.status})`);
+        const { data, error } = await fetchJson<SplitData>(`/api/splits/${splitId}`);
+        if (error) {
+          throw error;
         }
-        const json = (await res.json()) as SplitData;
-        if (!cancelled) setData(json);
+        if (!cancelled) setData(data!);
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : "Échec du chargement du groupe");

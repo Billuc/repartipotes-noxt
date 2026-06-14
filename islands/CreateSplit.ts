@@ -1,6 +1,7 @@
 import { html } from "htm/preact";
 import { useState } from "preact/hooks";
 import { defineIsland } from "noxt";
+import { fetchJson } from "noxt/runtime";
 import CurrencySelect from "./CurrencySelect";
 
 function CreateSplit() {
@@ -39,23 +40,20 @@ function CreateSplit() {
     setError(null);
 
     try {
-      const res = await fetch("/api/splits", {
+      const { data, error } = await fetchJson<{ id: string }>("/api/splits", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: {
           description: description.trim(),
           participants: validParticipants,
           default_currency: defaultCurrency,
-        }),
+        },
       });
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error((errData as any).error ?? "Échec de la création du groupe");
+      if (error) {
+        throw error;
       }
 
-      const data = (await res.json()) as { id: string };
-      window.location.href = `/split?split_id=${data.id}`;
+      window.location.href = `/split?split_id=${data!.id}`;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
       setSubmitting(false);
