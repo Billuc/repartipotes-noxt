@@ -6,6 +6,8 @@
     "module": "Preserve",
     "moduleDetection": "force",
     "allowJs": true,
+    "jsx": "react",
+    "jsxFactory": "h",
 
     // Bundler mode
     "moduleResolution": "bundler",
@@ -25,6 +27,11 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
-    "types": ["bun"]
+    "types": ["bun"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "noxt:api": ["./.cache/api.ts"],
+      "noxt:utils": ["./.cache/utils.ts"]
+    }
   }
 }

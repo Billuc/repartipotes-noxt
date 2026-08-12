@@ -1,8 +1,6 @@
-import { html } from "htm/preact";
+import { h } from "preact";
 import { useState, useEffect } from "preact/hooks";
-import { defineIsland } from "noxt";
-import { fetchJson } from "noxt/runtime";
-import CurrencySelect from "./CurrencySelect";
+import CurrencySelect from "./CurrencySelect.tsx";
 import type { SplitData } from "../lib/types.ts";
 
 function timestampToDateTimeLocal(ts: number): string {
@@ -15,7 +13,7 @@ function dateTimeLocalToTimestamp(val: string): number {
   return Math.floor(new Date(val).getTime() / 1000);
 }
 
-function EditExpense() {
+export default function EditExpense() {
   const [splitId, setSplitId] = useState<string | null>(null);
   const [expenseId, setExpenseId] = useState<number | null>(null);
   const [splitData, setSplitData] = useState<SplitData | null>(null);
@@ -59,7 +57,9 @@ function EditExpense() {
       setLoading(true);
       setError(null);
       try {
-        const { data, error } = await fetchJson<SplitData>(`/api/splits/${splitId}`);
+        const { data, error } = await fetchJson<SplitData>(
+          `/api/splits/${splitId}`,
+        );
         if (error) {
           throw error;
         }
@@ -95,7 +95,11 @@ function EditExpense() {
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Échec du chargement des données");
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Échec du chargement des données",
+          );
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -223,162 +227,163 @@ function EditExpense() {
   };
 
   if (loading) {
-    return html`<div
-      class="vstack items-center p-8"
-    >
-      <div aria-busy="true" data-spinner="large"></div>
-      <p>Chargement...</p>
-    </div>`;
+    return (
+      <div class="vstack items-center p-8">
+        <div aria-busy="true" data-spinner="large"></div>
+        <p>Chargement...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return html`<div role="alert" data-variant="error">${error}</div>`;
+    return (
+      <div role="alert" data-variant="error">
+        {error}
+      </div>
+    );
   }
 
   if (!splitData) {
-    return html`<p>Aucune donnée de groupe trouvée.</p>`;
+    return <p>Aucune donnée de groupe trouvée.</p>;
   }
 
-  return html`
+  return (
     <div class="vstack gap-4">
-      <a href="/split?split_id=${splitId}" data-variant="secondary">
-        ${"<"} Retour au groupe
+      <a href={`/split?split_id=${splitId}`} data-variant="secondary">
+        {"<"} Retour au groupe
       </a>
 
-      <h2>${isEditing ? "Modifier la dépense" : "Nouvelle dépense"}</h2>
+      <h2>{isEditing ? "Modifier la dépense" : "Nouvelle dépense"}</h2>
 
-      <form onSubmit=${handleSubmit}>
-        ${formError
-          ? html`<div role="alert" data-variant="error">${formError}</div>`
-          : null}
-
+      <form onSubmit={handleSubmit}>
+        
+        {formError ? (
+          <div role="alert" data-variant="error">
+            {formError}
+          </div>
+        ) : null}
         <label data-field>
           Nom :
           <input
             type="text"
-            value=${name}
-            onInput=${(e: Event) =>
-              setName((e.target as HTMLInputElement).value)}
+            value={name}
+            onInput={(e: Event) =>
+              setName((e.target as HTMLInputElement).value)
+            }
             placeholder="Nom de la dépense"
             required
           />
         </label>
-
         <label data-field>
           Montant :
           <input
             type="number"
-            value=${amount}
-            onInput=${(e: Event) =>
-              setAmount((e.target as HTMLInputElement).value)}
+            value={amount}
+            onInput={(e: Event) =>
+              setAmount((e.target as HTMLInputElement).value)
+            }
             step="0.01"
             min="0"
             placeholder="0.00"
             required
           />
         </label>
-
         <label data-field>
           Devise :
-          <${CurrencySelect}
-            selected=${currency}
-            onChange=${(code: string) => setCurrency(code)}
+          <CurrencySelect
+            selected={currency}
+            onChange={(code: string) => setCurrency(code)}
           />
         </label>
-
         <label data-field>
           Payé par :
           <select
-            value=${payedBy}
-            onChange=${(e: Event) =>
-              setPayedBy((e.target as HTMLSelectElement).value)}
+            value={payedBy}
+            onChange={(e: Event) =>
+              setPayedBy((e.target as HTMLSelectElement).value)
+            }
             required
           >
             <option value="">Sélectionner le payeur</option>
-            ${splitData.participants.map(
-              (p) => html`
-                <option value=${p} selected=${p === payedBy}>${p}</option>
-              `,
-            )}
+            {splitData.participants.map((p) => (
+              <option value={p} selected={p === payedBy}>
+                {p}
+              </option>
+            ))}
           </select>
         </label>
-
         <label data-field>
           Méthode de répartition :
           <select
-            value=${splitMethod}
-            onChange=${(e: Event) =>
+            value={splitMethod}
+            onChange={(e: Event) =>
               setSplitMethod(
                 (e.target as HTMLSelectElement).value as "Evenly" | "Amounts",
-              )}
+              )
+            }
           >
             <option value="Evenly">Équitablement</option>
             <option value="Amounts">Par montant</option>
           </select>
         </label>
-
         <fieldset>
           <legend>Répartir entre :</legend>
-          ${splitData.participants.map(
-            (p) => html`
-              <div class="hstack">
-                <label>
-                  <input
-                    type="checkbox"
-                    checked=${payedFor.includes(p)}
-                    onChange=${() => toggleParticipant(p)}
-                  />
-                  ${p}
-                </label>
+          {splitData.participants.map((p) => (
+            <div class="hstack">
+              <label>
                 <input
-                  type="number"
-                  value=${getAmountFor(p)}
-                  onInput=${(e: Event) => {
-                    if (splitMethod === "Amounts") {
-                      updateAmountValue(
-                        p,
-                        (e.target as HTMLInputElement).value,
-                      );
-                    }
-                  }}
-                  min="0"
-                  step="0.01"
-                  disabled=${splitMethod === "Evenly" || !payedFor.includes(p)}
-                  class="w-100px"
+                  type="checkbox"
+                  checked={payedFor.includes(p)}
+                  onChange={() => toggleParticipant(p)}
                 />
-              </div>
-            `,
-          )}
+                {p}
+              </label>
+              <input
+                type="number"
+                value={getAmountFor(p)}
+                onInput={(e: Event) => {
+                  if (splitMethod === "Amounts") {
+                    updateAmountValue(p, (e.target as HTMLInputElement).value);
+                  }
+                }}
+                min="0"
+                step="0.01"
+                disabled={splitMethod === "Evenly" || !payedFor.includes(p)}
+                class="w-100px"
+              />
+            </div>
+          ))}
         </fieldset>
-
         <label data-field>
           Date :
           <input
             type="datetime-local"
-            value=${dateTime}
-            onChange=${(e: Event) =>
-              setDateTime((e.target as HTMLInputElement).value)}
+            value={dateTime}
+            onChange={(e: Event) =>
+              setDateTime((e.target as HTMLInputElement).value)
+            }
           />
         </label>
-
         <div class="hstack justify-end gap-2 mt-4">
-          <button type="submit" disabled=${submitting}>
-            ${submitting ? "Enregistrement..." : isEditing ? "Enregistrer" : "Ajouter une dépense"}
+          <button type="submit" disabled={submitting}>
+            {submitting
+              ? "Enregistrement..."
+              : isEditing
+                ? "Enregistrer"
+                : "Ajouter une dépense"}
           </button>
-          ${isEditing
-            ? html`
-                <button
-                  type="button"
-                  data-variant="danger"
-                  onClick=${handleDelete}
-                  disabled=${submitting}
-                >
-                  Supprimer
-                </button>
-              `
-            : null}
+          {isEditing ? (
+            <button
+              type="button"
+              data-variant="danger"
+              onClick={handleDelete}
+              disabled={submitting}
+            >
+              Supprimer
+            </button>
+          ) : null}
           <a
-            href="/split?split_id=${splitId}"
+            href={`/split?split_id=${splitId}`}
             class="outline"
             data-variant="secondary"
           >
@@ -387,7 +392,5 @@ function EditExpense() {
         </div>
       </form>
     </div>
-  `;
+  );
 }
-
-export default defineIsland(EditExpense, import.meta.path);
