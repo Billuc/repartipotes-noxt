@@ -1,10 +1,7 @@
-import { html } from "htm/preact";
 import { h } from "preact";
 import { Island } from "noxt";
 import Layout from "@/components/Layout";
 import CreateSplit from "@/islands/CreateSplit";
-
-const CreateSplitIsland = await prepareIsland(CreateSplit);
 
 export default function CreateSplitPage() {
   return (
@@ -17,7 +14,7 @@ export default function CreateSplitPage() {
           avec vos amis.
         </p>
         <article class="card">
-          <Island component={CreateSplit} props={} />
+          <Island component={CreateSplit} props={{}} />
         </article>
       </section>
     </Layout>
