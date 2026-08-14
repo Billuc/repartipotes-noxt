@@ -8,6 +8,7 @@
     "allowJs": true,
     "jsx": "react",
     "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
 
     // Bundler mode
     "moduleResolution": "bundler",
