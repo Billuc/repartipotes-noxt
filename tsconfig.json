@@ -32,7 +32,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "noxt:api": ["./.cache/api.ts"],
-      "noxt:utils": ["./.cache/utils.ts"]
+      "noxt:utils": ["./.cache/utils.ts"],
+      "noxt:assets": ["./.cache/assets.ts"]
     }
   }
 }

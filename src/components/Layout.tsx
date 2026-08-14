@@ -1,5 +1,7 @@
 import { h } from "preact";
 import type { ComponentChildren } from "preact";
+import { asset } from "noxt:assets";
+import { link } from "noxt:utils";
 
 interface LayoutProps {
   title: string;
@@ -29,7 +31,7 @@ export default function Layout({ title, children, styles }: LayoutProps) {
           href="https://unpkg.com/@knadh/oat/oat.min.css"
         />
         <script src="https://unpkg.com/@knadh/oat/oat.min.js" defer></script>
-        <link rel="stylesheet" href="../assets/styles.css" />
+        <link rel="stylesheet" href={asset("/assets/styles.css")} />
         {(styles ?? []).map((s) => (
           <link rel="stylesheet" href={s} />
         ))}
@@ -38,7 +40,7 @@ export default function Layout({ title, children, styles }: LayoutProps) {
         <div class="container">
           <header>
             <h1>
-              <a href="/" class="unstyled" style="color:inherit">
+              <a href={link("/")} class="unstyled" style="color:inherit">
                 Répartipotes
               </a>
             </h1>
