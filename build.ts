@@ -11,6 +11,7 @@ import {
   prerenderIslands,
   prerenderMarkdownPages,
   prerenderPreactPages,
+  generateStaticPages,
 } from "noxt";
 
 const base = "/repartipotes"; // process.env.BASE ?? "";
@@ -21,7 +22,7 @@ const islandEntries = await discoverIslands();
 const preactPageEntries = await discoverPreactPages();
 const markdownPageEntries = await discoverMarkdownPages();
 const allPageEntries = [...preactPageEntries, ...markdownPageEntries];
-await generateAPIFile(apis);
+await generateAPIFile(apis, base);
 await generateAssetUtilsFile(assets, base);
 await generateRouteUtils(allPageEntries, base);
 
