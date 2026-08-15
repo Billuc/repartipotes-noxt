@@ -14,7 +14,7 @@ export default function CurrencySelect({
   onChange,
 }: CurrencySelectProps) {
   const { data: currencies, loading } = useApi(
-    apiRouter.api("/src/api/currencies", "GET"),
+    apiRouter.api("/api/currencies", "GET"),
     {},
   );
 
@@ -34,18 +34,17 @@ export default function CurrencySelect({
       autocomplete="off"
       required
     >
-      $
       {(currencies ?? []).map((opt) => (
         <option value={opt.code}>
           {opt.country_code ? (
             <img
-              src="https://flagcdn.com/16x12/${opt.country_code}.png"
+              src={`https://flagcdn.com/16x12/${opt.country_code}.png`}
               width="16"
               height="12"
               alt={opt.country}
             />
           ) : null}
-          ${opt.name}
+          {opt.name}
         </option>
       ))}
     </select>

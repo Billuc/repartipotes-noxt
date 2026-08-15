@@ -43,7 +43,7 @@ export default function CreateSplit() {
 
     try {
       const { data, error } = useApi(
-        apiRouter.api("/src/api/splits/create", "POST"),
+        apiRouter.api("/api/splits/create", "POST"),
         {
           description: description.trim(),
           participants: validParticipants,

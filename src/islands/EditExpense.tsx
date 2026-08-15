@@ -1,7 +1,9 @@
 import { h } from "preact";
-import { useState, useEffect } from "preact/hooks";
+import { useState, useEffect, useMemo } from "preact/hooks";
 import CurrencySelect from "./CurrencySelect.tsx";
-import type { SplitData } from "../lib/types.ts";
+import { apiRouter } from "@/lib/runtime.ts";
+import { useApi } from "noxt/runtime";
+import { buildSplitMethod } from "@/lib/runtime.ts";
 
 function timestampToDateTimeLocal(ts: number): string {
   const d = new Date(ts * 1000);
@@ -14,11 +16,28 @@ function dateTimeLocalToTimestamp(val: string): number {
 }
 
 export default function EditExpense() {
-  const [splitId, setSplitId] = useState<string | null>(null);
-  const [expenseId, setExpenseId] = useState<number | null>(null);
-  const [splitData, setSplitData] = useState<SplitData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { splitId, expenseId } = useMemo(() => {
+    const params = new URLSearchParams(window.location.search);
+    const splitId = params.get("split_id");
+    const expenseId = params.get("expense_id");
+    return { splitId, expenseId };
+  }, []);
+
+  if (!splitId) {
+    return (
+      <div role="alert" data-variant="error">
+        Identifiant de groupe manquant
+      </div>
+    );
+  }
+
+  const {
+    data: splitData,
+    error,
+    loading,
+  } = useApi(apiRouter.api("/api/splits", "GET"), { id: splitId! });
+
+  const [dataError, setDataError] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [amount, setAmount] = useState("");
@@ -36,81 +55,35 @@ export default function EditExpense() {
   const isEditing = expenseId !== null;
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const sId = params.get("split_id");
-    const eId = params.get("expense_id");
-    if (sId) {
-      setSplitId(sId);
-      if (eId) setExpenseId(Number(eId));
-    } else {
-      setError("Identifiant de groupe manquant");
-      setLoading(false);
-    }
-  }, []);
+    if (!splitData) return;
 
-  useEffect(() => {
-    if (!splitId) return;
+    setCurrency(splitData.default_currency);
+    setPayedFor([...splitData.participants]);
+    setDateTime(timestampToDateTimeLocal(Math.floor(Date.now() / 1000)));
 
-    let cancelled = false;
-
-    const fetchData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const { data, error } = await fetchJson<SplitData>(
-          `/api/splits/${splitId}`,
+    if (expenseId) {
+      const found = splitData.expenses.find((e) => e.id === Number(expenseId));
+      if (found) {
+        setName(found.name);
+        setAmount(found.original_amount.toString());
+        setCurrency(found.original_currency);
+        setPayedBy(found.payed_by);
+        setPayedFor([...found.payed_for]);
+        setSplitMethod(
+          found.split_method.method === "Amounts" ? "Amounts" : "Evenly",
         );
-        if (error) {
-          throw error;
+        if (
+          found.split_method.method === "Amounts" &&
+          found.split_method.details
+        ) {
+          setAmountsValue(JSON.parse(found.split_method.details));
         }
-        const json = data!;
-        if (!cancelled) {
-          setSplitData(json);
-          setCurrency(json.default_currency);
-          setPayedFor([...json.participants]);
-          setDateTime(timestampToDateTimeLocal(Math.floor(Date.now() / 1000)));
-
-          if (expenseId) {
-            const found = json.expenses.find((e) => e.id === expenseId);
-            if (found) {
-              setName(found.name);
-              setAmount(found.original_amount.toString());
-              setCurrency(found.original_currency);
-              setPayedBy(found.payed_by);
-              setPayedFor([...found.payed_for]);
-              setSplitMethod(
-                found.split_method.method === "Amounts" ? "Amounts" : "Evenly",
-              );
-              if (
-                found.split_method.method === "Amounts" &&
-                found.split_method.details
-              ) {
-                setAmountsValue(JSON.parse(found.split_method.details));
-              }
-              setDateTime(timestampToDateTimeLocal(found.expense_date));
-            } else {
-              setError("Dépense introuvable");
-            }
-          }
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Échec du chargement des données",
-          );
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
+        setDateTime(timestampToDateTimeLocal(found.expense_date));
+      } else {
+        setDataError("Dépense introuvable");
       }
-    };
-
-    fetchData();
-    return () => {
-      cancelled = true;
-    };
-  }, [splitId, expenseId]);
+    }
+  }, [splitData]);
 
   const toggleParticipant = (participant: string) => {
     setPayedFor((prev) =>
@@ -170,22 +143,26 @@ export default function EditExpense() {
       currency,
       payed_by: payedBy,
       payed_for: payedFor,
-      split_method: splitMethod,
-      amounts_value: amountsArray,
+      split_method: buildSplitMethod(
+        totalAmount,
+        payedFor,
+        splitMethod,
+        amountsArray,
+      ),
       expense_date: dateTimeLocalToTimestamp(dateTime),
     };
 
     try {
-      const url = isEditing ? `/api/expenses/${expenseId}` : "/api/expenses";
-      const method = isEditing ? "PUT" : "POST";
-
-      const { error } = await fetchJson(url, {
-        method,
-        body,
-      });
-
-      if (error) {
-        throw error;
+      if (isEditing) {
+        await apiRouter.api(
+          "/api/expenses",
+          "POST",
+        )({
+          id: Number(expenseId),
+          ...body,
+        });
+      } else {
+        await apiRouter.api("/api/expenses/create", "POST")(body);
       }
 
       window.location.href = `/split?split_id=${splitId}`;
@@ -202,14 +179,13 @@ export default function EditExpense() {
 
     setSubmitting(true);
     try {
-      const { error } = await fetchJson(`/api/expenses/${expenseId}`, {
-        method: "DELETE",
-        body: { split_id: splitId },
+      await apiRouter.api(
+        "/api/expenses",
+        "DELETE",
+      )({
+        id: Number(expenseId),
+        split_id: splitId,
       });
-
-      if (error) {
-        throw error;
-      }
 
       window.location.href = `/split?split_id=${splitId}`;
     } catch (err) {
@@ -235,10 +211,10 @@ export default function EditExpense() {
     );
   }
 
-  if (error) {
+  if (error || dataError) {
     return (
       <div role="alert" data-variant="error">
-        {error}
+        {error ?? dataError}
       </div>
     );
   }
@@ -256,7 +232,6 @@ export default function EditExpense() {
       <h2>{isEditing ? "Modifier la dépense" : "Nouvelle dépense"}</h2>
 
       <form onSubmit={handleSubmit}>
-        
         {formError ? (
           <div role="alert" data-variant="error">
             {formError}

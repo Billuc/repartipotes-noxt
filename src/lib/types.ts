@@ -90,38 +90,32 @@ export interface CreateExpenseInput {
   split_method: SplitMethod;
 }
 
-export const VCreateExpenseInput: v.GenericSchema<CreateExpenseInput> =
-  v.object({
-    split_id: v.string(),
-    name: v.string(),
-    amount: v.number(),
-    currency: v.string(),
-    original_amount: v.number(),
-    original_currency: v.string(),
-    payed_by: v.string(),
-    payed_for: v.array(v.string()),
-    expense_date: v.number(),
-    split_method: VSplitMethod,
-  });
+export const VCreateExpenseInput = v.object({
+  split_id: v.string(),
+  name: v.string(),
+  amount: v.number(),
+  currency: v.string(),
+  payed_by: v.string(),
+  payed_for: v.array(v.string()),
+  expense_date: v.number(),
+  split_method: VSplitMethod,
+});
 
 export interface UpdateExpenseInput extends CreateExpenseInput {
   id: number;
 }
 
-export const VUpdateExpenseInput: v.GenericSchema<UpdateExpenseInput> =
-  v.object({
-    id: v.number(),
-    split_id: v.string(),
-    name: v.string(),
-    amount: v.number(),
-    currency: v.string(),
-    original_amount: v.number(),
-    original_currency: v.string(),
-    payed_by: v.string(),
-    payed_for: v.array(v.string()),
-    expense_date: v.number(),
-    split_method: VSplitMethod,
-  });
+export const VUpdateExpenseInput = v.object({
+  id: v.number(),
+  split_id: v.string(),
+  name: v.string(),
+  amount: v.number(),
+  currency: v.string(),
+  payed_by: v.string(),
+  payed_for: v.array(v.string()),
+  expense_date: v.number(),
+  split_method: VSplitMethod,
+});
 
 export interface Currency {
   code: string;

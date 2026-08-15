@@ -1,0 +1,72 @@
+import { link } from "noxt:utils";
+import { h } from "preact";
+import { useState, useMemo } from "preact/hooks";
+
+export default function ShareSplit() {
+  const splitId = useMemo(
+    () => new URLSearchParams(window.location.search).get("split_id"),
+    [],
+  );
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
+
+  const copyToClipboard = async (
+    text: string,
+    setter: (v: boolean) => void,
+  ) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setter(true);
+      setTimeout(() => setter(false), 2000);
+    } catch {
+      alert("Échec de la copie dans le presse-papiers");
+    }
+  };
+
+  if (!splitId) {
+    return <p>Aucun identifiant de groupe fourni.</p>;
+  }
+
+  const splitUrl = link("/split", { split_id: splitId });
+
+  return (
+    <div class="vstack gap-4">
+      <a href={splitUrl} data-variant="secondary">
+        {"<"} Retour au groupe
+      </a>
+
+      <h2>Partager le groupe</h2>
+
+      <article class="card">
+        <div class="vstack">
+          <p>
+            Partagez ce lien avec vos amis :
+            <br />
+            <a href={splitUrl} target="_blank">
+              {splitUrl}
+            </a>{" "}
+            <button
+              type="button"
+              class="outline small"
+              onClick={() => copyToClipboard(splitUrl, setCopiedLink)}
+            >
+              {copiedLink ? "Copié !" : "Copier le lien"}
+            </button>
+          </p>
+          <p>
+            Ou utilisez ce code :
+            <br />
+            <strong>{splitId}</strong>{" "}
+            <button
+              type="button"
+              class="outline small"
+              onClick={() => copyToClipboard(splitId, setCopiedCode)}
+            >
+              {copiedCode ? "Copié !" : "Copier le code"}
+            </button>
+          </p>
+        </div>
+      </article>
+    </div>
+  );
+}
