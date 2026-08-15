@@ -13,7 +13,7 @@ import {
   prerenderPreactPages,
 } from "noxt";
 
-const base = process.env.BASE ?? "";
+const base = "/repartipotes"; // process.env.BASE ?? "";
 
 const apis = await discoverAPIs();
 const assets = await discoverAssets();
