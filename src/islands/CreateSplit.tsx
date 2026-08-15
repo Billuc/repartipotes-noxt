@@ -1,10 +1,10 @@
-import { html } from "htm/preact";
+import { h } from "preact";
 import { useState } from "preact/hooks";
-import { defineIsland } from "noxt";
-import { fetchJson } from "noxt/runtime";
 import CurrencySelect from "./CurrencySelect";
+import { useApi } from "noxt/runtime";
+import { apiRouter } from "@/lib/runtime";
 
-function CreateSplit() {
+export default function CreateSplit() {
   const [description, setDescription] = useState("");
   const [participants, setParticipants] = useState([""]);
   const [defaultCurrency, setDefaultCurrency] = useState("EUR");
@@ -32,7 +32,9 @@ function CreateSplit() {
       .filter((p) => p.length > 0);
 
     if (!description.trim() || validParticipants.length === 0) {
-      setError("Veuillez remplir la description et ajouter au moins un participant.");
+      setError(
+        "Veuillez remplir la description et ajouter au moins un participant.",
+      );
       return;
     }
 
@@ -40,14 +42,14 @@ function CreateSplit() {
     setError(null);
 
     try {
-      const { data, error } = await fetchJson<{ id: string }>("/api/splits", {
-        method: "POST",
-        body: {
+      const { data, error } = useApi(
+        apiRouter.api("/api/splits/create", "POST"),
+        {
           description: description.trim(),
           participants: validParticipants,
           default_currency: defaultCurrency,
         },
-      });
+      );
 
       if (error) {
         throw error;
@@ -60,17 +62,22 @@ function CreateSplit() {
     }
   };
 
-  return html`
-    <form onSubmit=${handleSubmit}>
-      ${error ? html`<div role="alert" data-variant="error">${error}</div>` : null}
+  return (
+    <form onSubmit={handleSubmit}>
+      {error ? (
+        <div role="alert" data-variant="error">
+          {error}
+        </div>
+      ) : null}
 
       <label data-field>
         Description :
         <input
           type="text"
-          value=${description}
-          onInput=${(e: Event) =>
-            setDescription((e.target as HTMLInputElement).value)}
+          value={description}
+          onInput={(e: Event) =>
+            setDescription((e.target as HTMLInputElement).value)
+          }
           placeholder="Voyage à Paris"
           required
         />
@@ -78,54 +85,45 @@ function CreateSplit() {
 
       <div data-field>
         <label>Participants :</label>
-        ${participants.map(
-          (p, i) => html`
-            <fieldset class="group">
-              <input
-                type="text"
-                value=${p}
-                onInput=${(e: Event) =>
-                  updateParticipant(i, (e.target as HTMLInputElement).value)}
-                placeholder="Nom"
-                required
-              />
-              ${participants.length > 1
-                ? html`
-                    <button
-                      type="button"
-                      class="ghost"
-                      onClick=${() => removeParticipant(i)}
-                      title="Supprimer"
-                    >
-                      ×
-                    </button>
-                  `
-                : null}
-            </fieldset>
-          `,
-        )}
-        <button
-          type="button"
-          class="outline"
-          onClick=${addParticipant}
-        >
+        {participants.map((p, i) => (
+          <fieldset class="group">
+            <input
+              type="text"
+              value={p}
+              onInput={(e: Event) =>
+                updateParticipant(i, (e.target as HTMLInputElement).value)
+              }
+              placeholder="Nom"
+              required
+            />
+            {participants.length > 1 ? (
+              <button
+                type="button"
+                class="ghost"
+                onClick={() => removeParticipant(i)}
+                title="Supprimer"
+              >
+                ×
+              </button>
+            ) : null}
+          </fieldset>
+        ))}
+        <button type="button" class="outline" onClick={addParticipant}>
           + Ajouter un participant
         </button>
       </div>
 
       <label data-field>
         Devise par défaut :
-        <${CurrencySelect}
-          selected=${defaultCurrency}
-          onChange=${(code: string) => setDefaultCurrency(code)}
+        <CurrencySelect
+          selected={defaultCurrency}
+          onChange={(code: string) => setDefaultCurrency(code)}
         />
       </label>
 
-      <button type="submit" disabled=${submitting}>
-        ${submitting ? "Création..." : "Créer le groupe"}
+      <button type="submit" disabled={submitting}>
+        {submitting ? "Création..." : "Créer le groupe"}
       </button>
     </form>
-  `;
+  );
 }
-
-export default defineIsland(CreateSplit, import.meta.path);

@@ -6,6 +6,9 @@
     "module": "Preserve",
     "moduleDetection": "force",
     "allowJs": true,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
 
     // Bundler mode
     "moduleResolution": "bundler",
@@ -25,6 +28,13 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
-    "types": ["bun"]
+    "types": ["bun"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "noxt:api": ["./.cache/api.ts"],
+      "noxt:utils": ["./.cache/utils.ts"],
+      "noxt:assets": ["./.cache/assets.ts"],
+      "noxt:routes": ["./.cache/routes.json"]
+    }
   }
 }

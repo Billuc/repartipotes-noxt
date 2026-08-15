@@ -1,6 +1,6 @@
 import { html } from "htm/preact";
 import { prepareIsland } from "noxt";
-import Layout from "../components/Layout";
+import Layout from "../../components/Layout";
 import ShareSplit from "../islands/ShareSplit";
 
 const ShareSplitIsland = await prepareIsland(ShareSplit);
