@@ -4,6 +4,7 @@ import CurrencySelect from "./CurrencySelect.tsx";
 import { apiRouter } from "@/lib/runtime.ts";
 import { useApi } from "noxt/runtime";
 import { buildSplitMethod } from "@/lib/runtime.ts";
+import { link } from "noxt:utils";
 
 function timestampToDateTimeLocal(ts: number): string {
   const d = new Date(ts * 1000);
@@ -165,7 +166,7 @@ export default function EditExpense() {
         await apiRouter.api("/api/expenses/create", "POST")(body);
       }
 
-      window.location.href = `/split?split_id=${splitId}`;
+      window.location.href = link("/split", { split_id: splitId });
     } catch (err) {
       setFormError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -187,7 +188,7 @@ export default function EditExpense() {
         split_id: splitId,
       });
 
-      window.location.href = `/split?split_id=${splitId}`;
+      window.location.href = link("/split", { split_id: splitId });
     } catch (err) {
       setFormError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -225,7 +226,7 @@ export default function EditExpense() {
 
   return (
     <div class="vstack gap-4">
-      <a href={`/split?split_id=${splitId}`} data-variant="secondary">
+      <a href={link("/split", { split_id: splitId })} data-variant="secondary">
         {"<"} Retour au groupe
       </a>
 
@@ -358,7 +359,7 @@ export default function EditExpense() {
             </button>
           ) : null}
           <a
-            href={`/split?split_id=${splitId}`}
+            href={link("/split", { split_id: splitId })}
             class="outline"
             data-variant="secondary"
           >

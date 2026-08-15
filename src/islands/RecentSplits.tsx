@@ -3,6 +3,7 @@ import { useState, useEffect } from "preact/hooks";
 import { getStoredIds, removeStoredId } from "../lib/splits";
 import { apiRouter } from "@/lib/runtime";
 import type { SplitData } from "@/lib/types";
+import { link } from "noxt:utils";
 
 interface SplitInfo {
   id: string;
@@ -54,7 +55,7 @@ export default function RecentSplits() {
           <div class="vstack gap-2">
             {recentSplits.map((s) => (
               <div class="card p-4 hstack justify-between">
-                <a href={`/split?split_id=${s.id}`}>{s.description}</a>
+                <a href={link("/split", { split_id: s.id })}>{s.description}</a>
                 <button
                   type="button"
                   class="small"

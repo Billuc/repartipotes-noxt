@@ -3,6 +3,7 @@ import { useState } from "preact/hooks";
 import CurrencySelect from "./CurrencySelect";
 import { useApi } from "noxt/runtime";
 import { apiRouter } from "@/lib/runtime";
+import { link } from "noxt:utils";
 
 export default function CreateSplit() {
   const [description, setDescription] = useState("");
@@ -55,7 +56,7 @@ export default function CreateSplit() {
         throw error;
       }
 
-      window.location.href = `/split?split_id=${data!.id}`;
+      window.location.href = link("/split", { split_id: data!.id });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
       setSubmitting(false);
