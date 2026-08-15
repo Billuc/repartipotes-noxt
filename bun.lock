@@ -256,7 +256,7 @@
 
     "ms": ["ms@2.1.3", "", {}, "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="],
 
-    "noxt": ["noxt@github:Billuc/noxt#73a7c59", { "dependencies": { "@preact/signals": "^2.10.0", "@testing-library/preact": "^3.2.4", "devalue": "^5.8.1", "esbuild": "^0.28.1", "micromark": "^4.0.2", "preact": "^10.29.2", "preact-render-to-string": "^6.7.0", "valibot": "^1.4.2", "yaml": "^2.9.0" }, "peerDependencies": { "typescript": "^5.9.3" } }, "Billuc-noxt-73a7c59", "sha512-V+N8A716NzfztODl2tWBJxudUDgkC3G9oRXNQ+gXYEAiynIajV/n8yaJBGLXX5mdvWyurx1YqlOhjCAK6dWVXw=="],
+    "noxt": ["noxt@github:Billuc/noxt#c4f3ebc", { "dependencies": { "@preact/signals": "^2.10.0", "@testing-library/preact": "^3.2.4", "devalue": "^5.8.1", "esbuild": "^0.28.1", "micromark": "^4.0.2", "preact": "^10.29.2", "preact-render-to-string": "^6.7.0", "valibot": "^1.4.2", "yaml": "^2.9.0" }, "peerDependencies": { "typescript": "^5.9.3" } }, "Billuc-noxt-c4f3ebc", "sha512-fGk5xJWYaWcHSKYTphtdOs7+A2GfgUFgEP+1NwSiUDKNTB2Hu90S0Y1JM7Mb1k1xmat3QNMbF89vKi4j6h/W8g=="],
 
     "object-inspect": ["object-inspect@1.13.4", "", {}, "sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew=="],
 
