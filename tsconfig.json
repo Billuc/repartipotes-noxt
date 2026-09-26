@@ -32,7 +32,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "noxt:api": ["./.cache/api.ts"],
-      "noxt:utils": ["./.cache/utils.ts"],
+      "noxt:pages": ["./.cache/pages.ts"],
       "noxt:assets": ["./.cache/assets.ts"],
       "noxt:routes": ["./.cache/routes.json"]
     }

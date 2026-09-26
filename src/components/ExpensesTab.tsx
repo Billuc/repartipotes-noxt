@@ -1,6 +1,6 @@
 import { h, Fragment } from "preact";
 import type { Expense } from "../lib/types.ts";
-import { link } from "noxt:utils";
+import { useNoxtContext } from "@/lib/runtime.ts";
 
 function formatDate(ts: number): string {
   return new Date(ts * 1000).toLocaleString(undefined, {
@@ -16,12 +16,14 @@ interface ExpensesTabProps {
 }
 
 export default function ExpensesTab({ split, expenses }: ExpensesTabProps) {
+  const { page } = useNoxtContext();
+
   return (
     <div id="expenses">
       <div class="hstack justify-between mb-4">
         <h3>Dépenses</h3>
         <a
-          href={link("/edit-expense", { split_id: split.id })}
+          href={page("/edit-expense", { split_id: split.id })}
           class="button small"
         >
           + Ajouter une dépense
@@ -69,7 +71,7 @@ export default function ExpensesTab({ split, expenses }: ExpensesTabProps) {
                     </span>
                   ) : null}
                   <a
-                    href={link("/edit-expense", {
+                    href={page("/edit-expense", {
                       split_id: split.id,
                       expense_id: exp.id,
                     })}

@@ -5,8 +5,8 @@ import { createCurrencyRepository } from "@/lib/repositories/currency_repository
 import { VUpdateExpenseInput, type UpdateExpenseInput } from "@/lib/types";
 import { convertSplitMethodAmounts } from "@/lib/expenses";
 import type { SplitMethod } from "@/lib/types";
-import { mutation } from "noxt";
-import * as v from "valibot";
+import { mutation } from "noxt/api";
+import * as s from "superstruct";
 
 const db = getDb();
 
@@ -26,7 +26,7 @@ async function convertExpenseAmount(
 
 export const POST = mutation()
   .input(VUpdateExpenseInput)
-  .output(v.object({ success: v.boolean() }))
+  .output(s.object({ success: s.boolean() }))
   .endpoint(async ({ input, response }) => {
     const split = splitRepo.getSplit(input.split_id);
     if (!split) {
@@ -74,8 +74,8 @@ export const POST = mutation()
   });
 
 export const DELETE = mutation()
-  .input(v.object({ id: v.number(), split_id: v.string() }))
-  .output(v.object({ success: v.boolean() }))
+  .input(s.object({ id: s.number(), split_id: s.string() }))
+  .output(s.object({ success: s.boolean() }))
   .endpoint(({ input }) => {
     expenseRepo.deleteExpense(input.id, input.split_id);
     return { success: true };

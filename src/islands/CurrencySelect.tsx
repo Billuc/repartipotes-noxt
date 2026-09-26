@@ -1,6 +1,6 @@
 import { h } from "preact";
 import { useApi } from "noxt/runtime";
-import { apiRouter } from "@/lib/runtime";
+import { useNoxtContext } from "@/lib/runtime";
 
 interface CurrencySelectProps {
   name?: string;
@@ -13,8 +13,10 @@ export default function CurrencySelect({
   selected = "EUR",
   onChange,
 }: CurrencySelectProps) {
+  const { api } = useNoxtContext();
+
   const { data: currencies, loading } = useApi(
-    apiRouter.api("/api/currencies", "GET"),
+    api("/api/currencies", "GET"),
     {},
   );
 

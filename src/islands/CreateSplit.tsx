@@ -2,10 +2,11 @@ import { h } from "preact";
 import { useState } from "preact/hooks";
 import CurrencySelect from "./CurrencySelect";
 import { useApi } from "noxt/runtime";
-import { apiRouter } from "@/lib/runtime";
-import { link } from "noxt:utils";
+import { useNoxtContext } from "@/lib/runtime";
 
 export default function CreateSplit() {
+  const { page, api } = useNoxtContext();
+
   const [description, setDescription] = useState("");
   const [participants, setParticipants] = useState([""]);
   const [defaultCurrency, setDefaultCurrency] = useState("EUR");
@@ -43,21 +44,18 @@ export default function CreateSplit() {
     setError(null);
 
     try {
-      const { data, error } = useApi(
-        apiRouter.api("/api/splits/create", "POST"),
-        {
-          description: description.trim(),
-          participants: validParticipants,
-          default_currency: defaultCurrency,
-        },
-      );
+      const data = await api(
+        "/api/splits/create",
+        "POST",
+      )({
+        description: description.trim(),
+        participants: validParticipants,
+        default_currency: defaultCurrency,
+      });
 
-      if (error) {
-        throw error;
-      }
-
-      window.location.href = link("/split", { split_id: data!.id });
+      window.location.href = page("/split", { split_id: data!.id });
     } catch (err) {
+      console.error(err);
       setError(err instanceof Error ? err.message : "Une erreur est survenue");
       setSubmitting(false);
     }

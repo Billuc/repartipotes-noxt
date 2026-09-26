@@ -8,8 +8,8 @@ import {
   type CreateExpenseInput,
   type SplitMethod,
 } from "@/lib/types";
-import { mutation } from "noxt";
-import * as v from "valibot";
+import { mutation } from "noxt/api";
+import * as s from "superstruct";
 
 const db = getDb();
 
@@ -29,7 +29,7 @@ async function convertExpenseAmount(
 
 export const POST = mutation()
   .input(VCreateExpenseInput)
-  .output(v.number())
+  .output(s.number())
   .endpoint(async ({ input, response }) => {
     const split = splitRepo.getSplit(input.split_id);
     if (!split) {

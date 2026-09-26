@@ -1,9 +1,8 @@
 import { h, Fragment } from "preact";
 import { useState, useEffect } from "preact/hooks";
 import { getStoredIds, removeStoredId } from "../lib/splits";
-import { apiRouter } from "@/lib/runtime";
+import { useNoxtContext } from "@/lib/runtime";
 import type { SplitData } from "@/lib/types";
-import { link } from "noxt:utils";
 
 interface SplitInfo {
   id: string;
@@ -11,6 +10,8 @@ interface SplitInfo {
 }
 
 export default function RecentSplits() {
+  const { page, api } = useNoxtContext();
+
   const [recentSplits, setRecentSplits] = useState<SplitInfo[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,7 +23,7 @@ export default function RecentSplits() {
 
     const splitDataPromises = ids.map(async (id) => {
       try {
-        const data = await apiRouter.api("/api/splits", "GET")({ id });
+        const data = await api("/api/splits", "GET")({ id });
         return data;
       } catch {
         return null;
@@ -55,7 +56,7 @@ export default function RecentSplits() {
           <div class="vstack gap-2">
             {recentSplits.map((s) => (
               <div class="card p-4 hstack justify-between">
-                <a href={link("/split", { split_id: s.id })}>{s.description}</a>
+                <a href={page("/split", { split_id: s.id })}>{s.description}</a>
                 <button
                   type="button"
                   class="small"

@@ -3,15 +3,15 @@ import { getDb } from "@/lib/database";
 import { createExpenseRepository } from "@/lib/repositories/expense_repository";
 import { createSplitRepository } from "@/lib/repositories/split_repository";
 import { VSplit, VSplitData, VUpdateSplitInput } from "@/lib/types";
-import { mutation, query } from "noxt";
-import * as v from "valibot";
+import { mutation, query } from "noxt/api";
+import * as s from "superstruct";
 
 const db = getDb();
 const splitRepo = createSplitRepository(db);
 const expenseRepo = createExpenseRepository(db);
 
 export const GET = query()
-  .input(v.object({ id: v.string() }))
+  .input(s.object({ id: s.string() }))
   .output(VSplitData)
   .endpoint((data) => {
     const split = splitRepo.getSplit(data.input.id);

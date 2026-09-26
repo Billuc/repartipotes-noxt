@@ -5,7 +5,7 @@
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   },
   "scripts": {
     "dev": "MODE=development bun run --watch ./index.ts",
@@ -16,8 +16,8 @@
   },
   "type": "module",
   "dependencies": {
-    "noxt": "github:Billuc/noxt#esbuild",
+    "noxt": "github:Billuc/noxt",
     "preact": "^10.29.8",
-    "valibot": "^1.4.2"
+    "superstruct": "^2.0.2"
   }
 }

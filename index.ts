@@ -1,22 +1,22 @@
-import { handlers } from "noxt:api";
-import routes from "noxt:routes";
-import { BASE } from "noxt:utils";
+import { NoxtProdServer, type RouteHandlers } from "noxt";
 
 const PORT = Bun.env.PORT ?? "2101";
-const noxtRoutes: Record<string, Response> = {};
-for (const route in routes) {
-  noxtRoutes[route] = new Response(
-    Bun.file(routes[route as keyof typeof routes]),
-  );
-}
+const base = "/repartipotes";
 
-Bun.serve({
-  port: PORT,
-  routes: {
-    ...noxtRoutes,
-    ...handlers,
+const server = new NoxtProdServer(
+  async ({ routes }: { routes: RouteHandlers<any> }) => {
+    let server = Bun.serve({
+      port: PORT,
+      routes,
+      fetch: (req) => {
+        console.log("Could not serve: " + req.url);
+        return new Response(undefined, { status: 404 });
+      },
+    });
+    console.log(
+      `Demo serving at http://localhost:${PORT}${base}/ (${Object.keys(routes).length} routes)`,
+    );
+    return server;
   },
-  development: process.env.MODE === "development",
-});
-
-console.log("Server running on http://localhost:" + PORT + BASE + "/");
+);
+server.start();

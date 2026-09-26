@@ -1,4 +1,4 @@
-import * as v from "valibot";
+import * as s from "superstruct";
 
 export interface Split {
   id: string;
@@ -7,11 +7,11 @@ export interface Split {
   default_currency: string;
 }
 
-export const VSplit: v.GenericSchema<Split> = v.object({
-  id: v.string(),
-  description: v.string(),
-  participants: v.array(v.string()),
-  default_currency: v.string(),
+export const VSplit: s.Struct<Split> = s.object({
+  id: s.string(),
+  description: s.string(),
+  participants: s.array(s.string()),
+  default_currency: s.string(),
 });
 
 export interface CreateSplitInput {
@@ -20,10 +20,10 @@ export interface CreateSplitInput {
   default_currency: string;
 }
 
-export const VCreateSplitInput: v.GenericSchema<CreateSplitInput> = v.object({
-  description: v.string(),
-  participants: v.array(v.string()),
-  default_currency: v.string(),
+export const VCreateSplitInput: s.Struct<CreateSplitInput> = s.object({
+  description: s.string(),
+  participants: s.array(s.string()),
+  default_currency: s.string(),
 });
 
 export interface UpdateSplitInput {
@@ -33,20 +33,20 @@ export interface UpdateSplitInput {
   default_currency?: string;
 }
 
-export const VUpdateSplitInput: v.GenericSchema<UpdateSplitInput> = v.object({
-  id: v.string(),
-  description: v.optional(v.string()),
-  participants: v.optional(v.array(v.string())),
-  default_currency: v.optional(v.string()),
+export const VUpdateSplitInput: s.Struct<UpdateSplitInput> = s.object({
+  id: s.string(),
+  description: s.optional(s.string()),
+  participants: s.optional(s.array(s.string())),
+  default_currency: s.optional(s.string()),
 });
 
 export type SplitMethod =
   | { method: "Evenly"; details: string }
   | { method: "Amounts"; details: string };
 
-const VSplitMethod: v.GenericSchema<SplitMethod> = v.union([
-  v.object({ method: v.literal("Evenly"), details: v.string() }),
-  v.object({ method: v.literal("Amounts"), details: v.string() }),
+const VSplitMethod: s.Struct<SplitMethod> = s.union([
+  s.object({ method: s.literal("Evenly"), details: s.string() }),
+  s.object({ method: s.literal("Amounts"), details: s.string() }),
 ]);
 
 export interface Expense {
@@ -63,17 +63,17 @@ export interface Expense {
   split_method: SplitMethod;
 }
 
-export const VExpense: v.GenericSchema<Expense> = v.object({
-  id: v.number(),
-  split_id: v.string(),
-  name: v.string(),
-  amount: v.number(),
-  currency: v.string(),
-  original_amount: v.number(),
-  original_currency: v.string(),
-  payed_by: v.string(),
-  payed_for: v.array(v.string()),
-  expense_date: v.number(),
+export const VExpense: s.Struct<Expense> = s.object({
+  id: s.number(),
+  split_id: s.string(),
+  name: s.string(),
+  amount: s.number(),
+  currency: s.string(),
+  original_amount: s.number(),
+  original_currency: s.string(),
+  payed_by: s.string(),
+  payed_for: s.array(s.string()),
+  expense_date: s.number(),
   split_method: VSplitMethod,
 });
 
@@ -90,14 +90,14 @@ export interface CreateExpenseInput {
   split_method: SplitMethod;
 }
 
-export const VCreateExpenseInput = v.object({
-  split_id: v.string(),
-  name: v.string(),
-  amount: v.number(),
-  currency: v.string(),
-  payed_by: v.string(),
-  payed_for: v.array(v.string()),
-  expense_date: v.number(),
+export const VCreateExpenseInput = s.object({
+  split_id: s.string(),
+  name: s.string(),
+  amount: s.number(),
+  currency: s.string(),
+  payed_by: s.string(),
+  payed_for: s.array(s.string()),
+  expense_date: s.number(),
   split_method: VSplitMethod,
 });
 
@@ -105,15 +105,15 @@ export interface UpdateExpenseInput extends CreateExpenseInput {
   id: number;
 }
 
-export const VUpdateExpenseInput = v.object({
-  id: v.number(),
-  split_id: v.string(),
-  name: v.string(),
-  amount: v.number(),
-  currency: v.string(),
-  payed_by: v.string(),
-  payed_for: v.array(v.string()),
-  expense_date: v.number(),
+export const VUpdateExpenseInput = s.object({
+  id: s.number(),
+  split_id: s.string(),
+  name: s.string(),
+  amount: s.number(),
+  currency: s.string(),
+  payed_by: s.string(),
+  payed_for: s.array(s.string()),
+  expense_date: s.number(),
   split_method: VSplitMethod,
 });
 
@@ -124,11 +124,11 @@ export interface Currency {
   country_code: string | null;
 }
 
-export const VCurrency: v.GenericSchema<Currency> = v.object({
-  code: v.string(),
-  name: v.string(),
-  country: v.string(),
-  country_code: v.nullable(v.string()),
+export const VCurrency: s.Struct<Currency> = s.object({
+  code: s.string(),
+  name: s.string(),
+  country: s.string(),
+  country_code: s.nullable(s.string()),
 });
 
 export interface Balance {
@@ -138,11 +138,11 @@ export interface Balance {
   creditor: string;
 }
 
-export const VBalance: v.GenericSchema<Balance> = v.object({
-  debtor: v.string(),
-  amount: v.number(),
-  currency: v.string(),
-  creditor: v.string(),
+export const VBalance: s.Struct<Balance> = s.object({
+  debtor: s.string(),
+  amount: s.number(),
+  currency: s.string(),
+  creditor: s.string(),
 });
 
 export interface SplitData {
@@ -155,12 +155,12 @@ export interface SplitData {
   balances: Balance[];
 }
 
-export const VSplitData: v.GenericSchema<SplitData> = v.object({
-  id: v.string(),
-  description: v.string(),
-  participants: v.array(v.string()),
-  default_currency: v.string(),
-  expenses: v.array(VExpense),
-  individualBalances: v.record(v.string(), v.number()),
-  balances: v.array(VBalance),
+export const VSplitData: s.Struct<SplitData> = s.object({
+  id: s.string(),
+  description: s.string(),
+  participants: s.array(s.string()),
+  default_currency: s.string(),
+  expenses: s.array(VExpense),
+  individualBalances: s.record(s.string(), s.number()),
+  balances: s.array(VBalance),
 });

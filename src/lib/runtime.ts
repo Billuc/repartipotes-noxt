@@ -1,9 +1,10 @@
-import { ApiRouter, useApi } from "noxt/runtime";
-import type { ApiRoutes } from "noxt:api";
-import { BASE } from "noxt:utils";
+import { UtilsContext } from "noxt/runtime";
+import type { RouteId } from "noxt:pages";
+import type { AssetId } from "noxt:assets";
 import type { SplitMethod } from "./types";
-
-export const apiRouter = new ApiRouter<ApiRoutes>(BASE);
+import { useContext } from "preact/hooks";
+import type { ApiRoutes } from "noxt:api";
+import type { UtilsContextData } from "noxt";
 
 export function buildSplitMethod(
   expenseAmount: number,
@@ -60,4 +61,11 @@ function validateAmounts(
       "La somme des montants doit être égale au montant de la dépense",
     );
   }
+}
+
+export function useNoxtContext() {
+  const { api, asset, page } =
+    useContext<UtilsContextData<ApiRoutes, {}, RouteId, AssetId>>(UtilsContext);
+
+  return { api, asset, page };
 }

@@ -1,10 +1,8 @@
 import { h } from "preact";
 import { useState, useEffect, useMemo } from "preact/hooks";
 import CurrencySelect from "./CurrencySelect.tsx";
-import { apiRouter } from "@/lib/runtime.ts";
 import { useApi } from "noxt/runtime";
-import { buildSplitMethod } from "@/lib/runtime.ts";
-import { link } from "noxt:utils";
+import { buildSplitMethod, useNoxtContext } from "@/lib/runtime.ts";
 
 function timestampToDateTimeLocal(ts: number): string {
   const d = new Date(ts * 1000);
@@ -17,6 +15,8 @@ function dateTimeLocalToTimestamp(val: string): number {
 }
 
 export default function EditExpense() {
+  const { page, api } = useNoxtContext();
+
   const { splitId, expenseId } = useMemo(() => {
     const params = new URLSearchParams(window.location.search);
     const splitId = params.get("split_id");
@@ -36,7 +36,7 @@ export default function EditExpense() {
     data: splitData,
     error,
     loading,
-  } = useApi(apiRouter.api("/api/splits", "GET"), { id: splitId! });
+  } = useApi(api("/api/splits", "GET"), { id: splitId! });
 
   const [dataError, setDataError] = useState<string | null>(null);
 
@@ -155,7 +155,7 @@ export default function EditExpense() {
 
     try {
       if (isEditing) {
-        await apiRouter.api(
+        await api(
           "/api/expenses",
           "POST",
         )({
@@ -163,11 +163,12 @@ export default function EditExpense() {
           ...body,
         });
       } else {
-        await apiRouter.api("/api/expenses/create", "POST")(body);
+        await api("/api/expenses/create", "POST")(body);
       }
 
-      window.location.href = link("/split", { split_id: splitId });
+      window.location.href = page("/split", { split_id: splitId });
     } catch (err) {
+      console.error(err);
       setFormError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setSubmitting(false);
@@ -180,7 +181,7 @@ export default function EditExpense() {
 
     setSubmitting(true);
     try {
-      await apiRouter.api(
+      await api(
         "/api/expenses",
         "DELETE",
       )({
@@ -188,8 +189,9 @@ export default function EditExpense() {
         split_id: splitId,
       });
 
-      window.location.href = link("/split", { split_id: splitId });
+      window.location.href = page("/split", { split_id: splitId });
     } catch (err) {
+      console.error(err);
       setFormError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setSubmitting(false);
@@ -226,7 +228,7 @@ export default function EditExpense() {
 
   return (
     <div class="vstack gap-4">
-      <a href={link("/split", { split_id: splitId })} data-variant="secondary">
+      <a href={page("/split", { split_id: splitId })} data-variant="secondary">
         {"<"} Retour au groupe
       </a>
 
@@ -359,7 +361,7 @@ export default function EditExpense() {
             </button>
           ) : null}
           <a
-            href={link("/split", { split_id: splitId })}
+            href={page("/split", { split_id: splitId })}
             class="outline"
             data-variant="secondary"
           >

@@ -1,8 +1,10 @@
-import { link } from "noxt:utils";
+import { useNoxtContext } from "@/lib/runtime";
 import { h } from "preact";
 import { useState, useMemo } from "preact/hooks";
 
 export default function ShareSplit() {
+  const { page } = useNoxtContext();
+
   const splitId = useMemo(
     () => new URLSearchParams(window.location.search).get("split_id"),
     [],
@@ -27,7 +29,7 @@ export default function ShareSplit() {
     return <p>Aucun identifiant de groupe fourni.</p>;
   }
 
-  const splitUrl = link("/split", { split_id: splitId });
+  const splitUrl = page("/split", { split_id: splitId });
 
   return (
     <div class="vstack gap-4">

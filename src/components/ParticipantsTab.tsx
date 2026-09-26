@@ -1,6 +1,6 @@
+import { useNoxtContext } from "@/lib/runtime";
 import { h } from "preact";
 import { useState } from "preact/hooks";
-import { apiRouter } from "@/lib/runtime";
 
 interface SettingsTabProps {
   participants: string[];
@@ -17,6 +17,8 @@ export default function SettingsTab({
   splitId,
   onSaved,
 }: SettingsTabProps) {
+  const { api } = useNoxtContext();
+
   const [newParticipant, setNewParticipant] = useState("");
   const [participantError, setParticipantError] = useState<string | null>(null);
 
@@ -27,7 +29,7 @@ export default function SettingsTab({
     const updated = [...participants, newParticipant.trim()];
 
     try {
-      await apiRouter.api(
+      await api(
         "/api/splits",
         "POST",
       )({

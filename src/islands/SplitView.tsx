@@ -5,10 +5,11 @@ import SettlementsTab from "../components/SettlementsTab.tsx";
 import ParticipantsTab from "../components/ParticipantsTab.tsx";
 import { storeId } from "../lib/splits.ts";
 import { useApi } from "noxt/runtime";
-import { apiRouter } from "@/lib/runtime.ts";
-import { link } from "noxt:utils";
+import { useNoxtContext } from "@/lib/runtime.ts";
 
 export default function SplitView() {
+  const { page, api } = useNoxtContext();
+
   const splitId = useMemo(() => {
     const id = new URLSearchParams(window.location.search).get("split_id");
     if (!id) return null;
@@ -24,10 +25,9 @@ export default function SplitView() {
     );
   }
 
-  const { data, error, loading, refresh } = useApi(
-    apiRouter.api("/api/splits", "GET"),
-    { id: splitId },
-  );
+  const { data, error, loading, refresh } = useApi(api("/api/splits", "GET"), {
+    id: splitId,
+  });
 
   if (loading) {
     return (
@@ -55,7 +55,7 @@ export default function SplitView() {
       <div class="hstack justify-between mb-4">
         <h2>{data.description}</h2>
         <a
-          href={link("/share-split", { split_id: data.id })}
+          href={page("/share-split", { split_id: data.id })}
           data-variant="secondary"
         >
           Partager

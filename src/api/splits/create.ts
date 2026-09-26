@@ -1,7 +1,7 @@
 import { getDb } from "@/lib/database";
 import { createSplitRepository } from "@/lib/repositories/split_repository";
 import { VCreateSplitInput, VSplit, type CreateSplitInput } from "@/lib/types";
-import { mutation } from "noxt";
+import { mutation } from "noxt/api";
 
 const splitRepo = createSplitRepository(getDb());
 

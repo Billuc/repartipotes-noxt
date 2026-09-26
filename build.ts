@@ -7,36 +7,34 @@ import {
   generateAPIFile,
   generateRouteMap,
   generateRouteUtils,
-  generateAssetUtilsFile,
+  generateAssetUtils,
   prerenderIslands,
   prerenderMarkdownPages,
   prerenderPreactPages,
   generateStaticPages,
+  BuildPipeline,
 } from "noxt";
 
 const base = "/repartipotes"; // process.env.BASE ?? "";
 
-const apis = await discoverAPIs();
-const assets = await discoverAssets();
-const islandEntries = await discoverIslands();
-const preactPageEntries = await discoverPreactPages();
-const markdownPageEntries = await discoverMarkdownPages();
-const allPageEntries = [...preactPageEntries, ...markdownPageEntries];
-await generateAPIFile(apis, base);
-await generateAssetUtilsFile(assets, base);
-await generateRouteUtils(allPageEntries, base);
-
-const islands = await prerenderIslands(islandEntries);
-const markdownPages = await prerenderMarkdownPages(
-  markdownPageEntries,
-  base,
-  islands,
-);
-const preactPages = await prerenderPreactPages(
-  preactPageEntries,
-  base,
-  islands,
-);
-const allPages = [...preactPages, ...markdownPages];
-
-await generateRouteMap(allPages, islands, assets, base);
+await BuildPipeline.newPipeline()
+  .with(() => ({ base }))
+  .with(discoverAPIs)
+  .with(discoverAssets)
+  .with(discoverIslands)
+  .with(discoverMarkdownPages)
+  .with(discoverPreactPages)
+  .with(generateAPIFile)
+  .with(generateAssetUtils)
+  .with(({ markdownFiles, preactFiles }) => ({
+    pageFiles: [...preactFiles, ...markdownFiles],
+  }))
+  .with(generateRouteUtils)
+  .with(prerenderIslands)
+  .with(prerenderMarkdownPages)
+  .with(prerenderPreactPages)
+  .with(({ markdownPages, preactPages }) => ({
+    pages: [...preactPages, ...markdownPages],
+  }))
+  .with(generateRouteMap)
+  .build();

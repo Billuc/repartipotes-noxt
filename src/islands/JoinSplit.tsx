@@ -1,9 +1,10 @@
 import { h } from "preact";
 import { useState } from "preact/hooks";
 import { storeId } from "../lib/splits";
-import { link } from "noxt:utils";
+import { useNoxtContext } from "@/lib/runtime";
 
 export default function JoinSplit() {
+  const { page } = useNoxtContext();
   const [code, setCode] = useState("");
 
   const handleJoin = (e: Event) => {
@@ -11,7 +12,7 @@ export default function JoinSplit() {
     const trimmed = code.trim();
     if (!trimmed) return;
     storeId(trimmed);
-    window.location.href = link("/split", { split_id: trimmed });
+    window.location.href = page("/split", { split_id: trimmed });
   };
 
   return (

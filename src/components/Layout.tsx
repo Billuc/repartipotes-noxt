@@ -1,7 +1,6 @@
+import { useNoxtContext } from "@/lib/runtime";
 import { h } from "preact";
 import type { ComponentChildren } from "preact";
-import { asset } from "noxt:assets";
-import { link } from "noxt:utils";
 
 interface LayoutProps {
   title: string;
@@ -10,6 +9,8 @@ interface LayoutProps {
 }
 
 export default function Layout({ title, children, styles }: LayoutProps) {
+  const { page, asset } = useNoxtContext();
+
   return (
     <html>
       <head>
@@ -40,7 +41,7 @@ export default function Layout({ title, children, styles }: LayoutProps) {
         <div class="container">
           <header>
             <h1>
-              <a href={link("/")} class="unstyled" style="color:inherit">
+              <a href={page("/")} class="unstyled" style="color:inherit">
                 Répartipotes
               </a>
             </h1>

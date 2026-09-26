@@ -1,31 +1,41 @@
-import { staticPrerender } from "noxt";
+import {
+  discoverAPIs,
+  discoverAssets,
+  discoverMarkdownPages,
+  discoverPreactPages,
+  discoverIslands,
+  generateAPIFile,
+  generateRouteMap,
+  generateRouteUtils,
+  generateAssetUtils,
+  prerenderIslands,
+  prerenderMarkdownPages,
+  prerenderPreactPages,
+  generateStaticPages,
+  BuildPipeline,
+} from "noxt";
 
-const routes = await staticPrerender();
+const base = "/repartipotes"; // process.env.BASE ?? "";
 
-console.log(`\nPrerendered ${routes.length} route(s):`);
-for (const { routeName } of routes) {
-  console.log(`  ${routeName}`);
-}
-
-if (process.argv.includes("--preview")) {
-  const routeMap = new Map<string, string>(
-    routes.map(({ routeName, filePath }) => [routeName, filePath]),
-  );
-  const port = 3000;
-
-  console.log(`\nPreview server: http://localhost:${port}`);
-
-  Bun.serve({
-    port,
-    async fetch(request) {
-      const url = new URL(request.url);
-      const filePath = routeMap.get(url.pathname);
-
-      if (filePath) {
-        return new Response(Bun.file(filePath));
-      }
-
-      return new Response("Not Found", { status: 404 });
-    },
-  });
-}
+await BuildPipeline.newPipeline()
+  .with(() => ({ base }))
+  .with(discoverAPIs)
+  .with(discoverAssets)
+  .with(discoverIslands)
+  .with(discoverMarkdownPages)
+  .with(discoverPreactPages)
+  .with(generateAPIFile)
+  .with(generateAssetUtils)
+  .with(({ markdownFiles, preactFiles }) => ({
+    pageFiles: [...preactFiles, ...markdownFiles],
+  }))
+  .with(generateRouteUtils)
+  .with(prerenderIslands)
+  .with(prerenderMarkdownPages)
+  .with(prerenderPreactPages)
+  .with(({ markdownPages, preactPages }) => ({
+    pages: [...preactPages, ...markdownPages],
+  }))
+  .with(generateRouteMap)
+  .with(generateStaticPages)
+  .build();
